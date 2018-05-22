@@ -1,5 +1,5 @@
 attribute vec2 vpos;
-attribute vec3 vcolor;
+attribute vec3 vcolor
 varying vec3 fcolor;
 
 void main() {

@@ -1,34 +1,14 @@
 #ifdef _MSC_VER
-#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
 #include "common.h"
 #include "../lib/glfw/glfw3.h"
-#include <fstream>
-#include <iostream>
+#include "shader.h"
 #include <vector>
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
-
-struct Vertex {
-	float x, y;
-	float r, g, b;
-
-	Vertex(float x, float y, float r, float g, float b)
-	:
-		x(x), y(y),
-		r(r), g(g), b(b)
-	{}
-};
-
-std::string readString(const std::string& filename) {
-	std::ifstream ifs(filename.c_str(), std::ios_base::binary | std::ios_base::ate);
-	std::vector<char> chars(ifs.tellg());
-	ifs.seekg(0);
-	ifs.read(chars.data(), chars.size());
-	return std::string(chars.data(), chars.size());
-}
 
 int main() {
 	// init glfw
@@ -55,82 +35,27 @@ int main() {
 		return -1;
 	}
 
-	// load shaders code
-	std::string vertexShaderSource = readString("data/vertex.glsl");
-	std::string fragmentShaderSource = readString("data/fragment.glsl");
-
-	// create vertex shader
-	int retCode;
-	const char* cVertexShaderSource = vertexShaderSource.c_str();
-	uint32_t vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &cVertexShaderSource, nullptr);
-	glCompileShader(vertexShader);
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &retCode);
-	if (retCode == GL_FALSE) {
-		char errorLog[1024];
-		glGetShaderInfoLog(vertexShader, sizeof(errorLog), nullptr, errorLog);
-		std::cout
-			<< "vertex shader could not be compiled:"
-			<< std::endl
-			<< errorLog
-			<< std::endl;
-		glDeleteShader(vertexShader);
-		glfwTerminate();
-		return -1;
-	}
-
-	// create fragment shader
-	const char* cFragmentShaderSource = fragmentShaderSource.c_str();
-	uint32_t fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &cFragmentShaderSource, nullptr);
-	glCompileShader(fragmentShader);
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &retCode);
-	if (retCode == GL_FALSE) {
-		char errorLog[1024];
-		glGetShaderInfoLog(fragmentShader, sizeof(errorLog), nullptr, errorLog);
-		std::cout
-			<< "fragment shader could not be compiled:"
-			<< std::endl
-			<< errorLog
-			<< std::endl;
-		glDeleteShader(vertexShader);
-		glDeleteShader(fragmentShader);
-		glfwTerminate();
-		return -1;
-	}
-
-	// create and link program
-	uint32_t program = glCreateProgram();
-	glAttachShader(program, vertexShader);
-	glAttachShader(program, fragmentShader);
-	glLinkProgram(program);
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	glGetProgramiv(program, GL_LINK_STATUS, &retCode);
-	if (retCode == GL_FALSE) {
-		char errorLog[1024];
-		glGetProgramInfoLog(program, sizeof(errorLog), nullptr, errorLog);
-		std::cout
-			<< "program could not be linked:"
-			<< std::endl
-			<< errorLog
-			<< std::endl;
-		glDeleteProgram(program);
+	Shader* shader = Shader::createShader(readString("data/vertex.glsl"), readString("data/fragment.glsl"));
+	
+	if (!shader) {
+		std::cout << Shader::getError() << std::endl;
 		glfwTerminate();
 		return -1;
 	}
 
 	// use program and get locations
-	int vposLoc = glGetAttribLocation(program, "vpos");
-	int vcolorLoc = glGetAttribLocation(program, "vcolor");
-	glUseProgram(program);
+	//int vposLoc = glGetAttribLocation(program, "vpos");
+	//int vcolorLoc = glGetAttribLocation(program, "vcolor");
+
+	shader->use();
 
 	// initialize opengl states
 	glEnable(GL_SCISSOR_TEST);
+	glEnable(GL_DEPTH_TEST);
 	//glEnableClientState(GL_VERTEX_ARRAY); // ***
 	//glEnableClientState(GL_COLOR_ARRAY); // ***
-	glEnableVertexAttribArray(vposLoc);
-	glEnableVertexAttribArray(vcolorLoc);
+	//glEnableVertexAttribArray(vposLoc);
+	//glEnableVertexAttribArray(vcolorLoc);
 
 	// define triangle
 	std::vector<Vertex> vertices = {
@@ -148,8 +73,8 @@ int main() {
 	// describe data for vertex buffer objects
 	//glVertexPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, x))); // ***
 	//glColorPointer(3, GL_FLOAT, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, r))); // ***
-	glVertexAttribPointer(vposLoc, 2, GL_FLOAT, false, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, x)));
-	glVertexAttribPointer(vcolorLoc, 3, GL_FLOAT, false, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, r)));
+	//glVertexAttribPointer(vposLoc, 2, GL_FLOAT, false, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, x)));
+	//glVertexAttribPointer(vcolorLoc, 3, GL_FLOAT, false, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, r)));
 
 	// describe data for vertex arrays
 	//glVertexPointer(2, GL_FLOAT, sizeof(Vertex), &vertices[0].x); // ***
@@ -193,7 +118,7 @@ int main() {
 	}
 
 	// shutdown
-	glDeleteProgram(program);
+	//glDeleteProgram(program);
 	glDeleteBuffers(1, &vertexBuffer);
 	glfwTerminate();
 }

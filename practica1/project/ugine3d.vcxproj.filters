@@ -36,6 +36,12 @@
     <ClInclude Include="..\src\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp">
@@ -43,6 +49,12 @@
     </ClCompile>
     <ClCompile Include="..\lib\glew\glew.c">
       <Filter>glew</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
