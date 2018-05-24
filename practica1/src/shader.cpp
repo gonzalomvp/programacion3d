@@ -2,13 +2,17 @@
 
 char Shader::errorLog[1024];
 
-Shader* Shader::createShader(const std::string vertexShaderSource, const std::string fragmentShaderSource)
+ShaderPtr Shader::createShader(const std::string vertexShaderSource, const std::string fragmentShaderSource)
 {
-	std::shared_ptr<Shader> s(new Shader(vertexShaderSource, fragmentShaderSource), [](Shader* p) { delete p; });
-	//comprobar si Id = 0
+	std::shared_ptr<Shader> shader(new Shader(vertexShaderSource, fragmentShaderSource), [](Shader* p) { delete p; });
+	
+	if (shader->m_Id == 0) {
+		shader = nullptr;
+	}
+	return shader;
 }
 
-Shader::Shader(const std::string vertexShaderSource, const std::string fragmentShaderSource) : m_Id(0) {
+Shader::Shader(const std::string vertexShaderSource, const std::string fragmentShaderSource) : m_Id(0), m_vposLoc(-1), m_vcolorLoc(-1) {
 	// create vertex shader
 	int retCode;
 	const char* cVertexShaderSource = vertexShaderSource.c_str();
@@ -50,8 +54,26 @@ Shader::Shader(const std::string vertexShaderSource, const std::string fragmentS
 		glGetProgramInfoLog(m_Id, sizeof(errorLog), nullptr, errorLog);
 		glDeleteProgram(m_Id);
 	}
+	m_vposLoc   = glGetAttribLocation(m_Id, "vpos");
+	m_vcolorLoc = glGetAttribLocation(m_Id, "vcolor");
 }
 
-void Shader::use() const{
+Shader::~Shader() {
+	glDeleteProgram(m_Id);
+}
+
+void Shader::use() const {
 	glUseProgram(m_Id);
+}
+
+void Shader::setupAttribs() const {
+	if (m_vposLoc != -1) {
+		glEnableVertexAttribArray(m_vposLoc);
+		glVertexAttribPointer(m_vposLoc, 2, GL_FLOAT, false, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, x)));
+	}
+
+	if (m_vcolorLoc != -1) {
+		glEnableVertexAttribArray(m_vcolorLoc);
+		glVertexAttribPointer(m_vcolorLoc, 3, GL_FLOAT, false, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, r)));
+	}
 }

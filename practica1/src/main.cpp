@@ -35,7 +35,7 @@ int main() {
 		return -1;
 	}
 
-	Shader* shader = Shader::createShader(readString("data/vertex.glsl"), readString("data/fragment.glsl"));
+	ShaderPtr shader = Shader::createShader(readString("data/vertex.glsl"), readString("data/fragment.glsl"));
 	
 	if (!shader) {
 		std::cout << Shader::getError() << std::endl;
@@ -44,9 +44,6 @@ int main() {
 	}
 
 	// use program and get locations
-	//int vposLoc = glGetAttribLocation(program, "vpos");
-	//int vcolorLoc = glGetAttribLocation(program, "vcolor");
-
 	shader->use();
 
 	// initialize opengl states
@@ -71,6 +68,8 @@ int main() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
 	// describe data for vertex buffer objects
+	shader->setupAttribs();
+
 	//glVertexPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, x))); // ***
 	//glColorPointer(3, GL_FLOAT, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, r))); // ***
 	//glVertexAttribPointer(vposLoc, 2, GL_FLOAT, false, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, x)));
