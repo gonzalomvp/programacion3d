@@ -77,3 +77,13 @@ void Shader::setupAttribs() const {
 		glVertexAttribPointer(m_vcolorLoc, 3, GL_FLOAT, false, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, r)));
 	}
 }
+
+int Shader::getLocation(const char* name) const {
+	return glGetUniformLocation(m_Id, name);
+}
+
+void Shader::setMatrix(int loc, const glm::mat4& matrix) {
+	if (loc != -1) {
+		glUniformMatrix4fv(loc, 1, false, glm::value_ptr(matrix));
+	}
+}

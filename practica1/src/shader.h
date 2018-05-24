@@ -39,5 +39,6 @@ private:
 	uint32_t m_Id;
 	int      m_vposLoc;
 	int      m_vcolorLoc;
+	int      m_MVPLoc;
 	static char errorLog[1024];
 };

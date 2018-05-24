@@ -45,7 +45,7 @@ int main() {
 	}
 
 	// use program and get locations
-	shader->use();
+	
 
 	// initialize opengl states
 	glEnable(GL_SCISSOR_TEST);
@@ -88,6 +88,7 @@ int main() {
 
 	// main loop
 	double lastTime = glfwGetTime();
+	float angle = 0.0f;
 	while ( !glfwWindowShouldClose(win) && !glfwGetKey(win, GLFW_KEY_ESCAPE) ) {
 		// get delta time
 		float deltaTime = static_cast<float>(glfwGetTime() - lastTime);
@@ -105,7 +106,26 @@ int main() {
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+		//matriz
+		angle += deltaTime * 32;
+
+		glm::mat4 projection = glm::perspective(45.0f, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
+		glm::vec3 eye(0.0f, 0.0f, 6.0f);
+		glm::vec3 center(0.0f, 0.0f, 0.0f);
+		glm::vec3 up(0.0f, 1.0f, 0.0f);
+		glm::mat4 view = glm::lookAt(eye, center, up);
+		//glm::mat4 model = glm::mat4(1.0f);
+
+		// pinta primera fila
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
+		glm::mat4 MVP = projection * view * model;
+
+		int i = shader->getLocation("MVP");
+		shader->setMatrix(shader->getLocation("MVP"), MVP);
+
 		// draw with vertex arrays & vbos
+		shader->use();
 		buffer->draw(*shader);
 		//glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 		
