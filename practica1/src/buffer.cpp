@@ -14,12 +14,14 @@ BufferPtr Buffer::createBuffer(const std::vector<Vertex>& vertices, const std::v
 
 
 Buffer::Buffer(const std::vector<Vertex>& vertices, const std::vector<uint16_t>& indexes) {
-	m_vertexSize = vertices.size();
+	m_indexCount = indexes.size();
 
 	glGenBuffers(1, &m_vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
 	glGenBuffers(1, &m_indexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * indexes.size(), indexes.data(), GL_STATIC_DRAW);
 }
 
@@ -32,9 +34,9 @@ Buffer::~Buffer() {
 
 void Buffer::draw(const Shader& shader) const {
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
 
 	shader.setupAttribs();
 
-	glDrawArrays(GL_TRIANGLES, 0, m_vertexSize);
+	glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_SHORT, nullptr);
 }

@@ -4,6 +4,7 @@
 
 #include "common.h"
 #include "../lib/glfw/glfw3.h"
+#include "buffer.h"
 #include "shader.h"
 #include <vector>
 
@@ -61,14 +62,20 @@ int main() {
 		Vertex( 1, -1,  0, 0, 1)
 	};
 
+	std::vector<uint16_t> indexes = {
+		0, 1, 2
+	};
+
+	BufferPtr buffer = Buffer::createBuffer(vertices, indexes);
+
 	// store triangle in vram
-	uint32_t vertexBuffer;
-	glGenBuffers(1, &vertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+	//uint32_t vertexBuffer;
+	//glGenBuffers(1, &vertexBuffer);
+	//glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
 	// describe data for vertex buffer objects
-	shader->setupAttribs();
+	//shader->setupAttribs();
 
 	//glVertexPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, x))); // ***
 	//glColorPointer(3, GL_FLOAT, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, r))); // ***
@@ -99,7 +106,8 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// draw with vertex arrays & vbos
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+		buffer->draw(*shader);
+		//glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 		
 		// draw with glBegin ... glEnd
 		/*glBegin(GL_TRIANGLES);
@@ -118,6 +126,6 @@ int main() {
 
 	// shutdown
 	//glDeleteProgram(program);
-	glDeleteBuffers(1, &vertexBuffer);
+	//glDeleteBuffers(1, &vertexBuffer);
 	glfwTerminate();
 }
