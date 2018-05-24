@@ -57,9 +57,9 @@ int main() {
 
 	// define triangle
 	std::vector<Vertex> vertices = {
-		Vertex( 0,  1,  1, 0, 0),
-		Vertex(-1, -1,  0, 1, 0),
-		Vertex( 1, -1,  0, 0, 1)
+		Vertex( 0,  1, 0, 1, 0, 0),
+		Vertex(-1, -1, 0, 0, 1, 0),
+		Vertex( 1, -1, 0, 0, 0, 1)
 	};
 
 	std::vector<uint16_t> indexes = {
