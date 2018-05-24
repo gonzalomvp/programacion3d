@@ -45,7 +45,7 @@ int main() {
 	}
 
 	// use program and get locations
-	
+	shader->use();
 
 	// initialize opengl states
 	glEnable(GL_SCISSOR_TEST);
@@ -117,16 +117,58 @@ int main() {
 		glm::mat4 view = glm::lookAt(eye, center, up);
 		//glm::mat4 model = glm::mat4(1.0f);
 
+		int i = shader->getLocation("MVP");
+		
+
 		// pinta primera fila
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
 		glm::mat4 MVP = projection * view * model;
-
-		int i = shader->getLocation("MVP");
 		shader->setMatrix(shader->getLocation("MVP"), MVP);
-
-		// draw with vertex arrays & vbos
-		shader->use();
 		buffer->draw(*shader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-3, 0, 0)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
+		MVP = projection * view * model;
+		shader->setMatrix(shader->getLocation("MVP"), MVP);
+		buffer->draw(*shader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(3, 0, 0)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
+		MVP = projection * view * model;
+		shader->setMatrix(shader->getLocation("MVP"), MVP);
+		buffer->draw(*shader);
+
+		// pinta segunda fila
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -3)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
+		MVP = projection * view * model;
+		shader->setMatrix(shader->getLocation("MVP"), MVP);
+		buffer->draw(*shader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-3, 0, -3)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
+		MVP = projection * view * model;
+		shader->setMatrix(shader->getLocation("MVP"), MVP);
+		buffer->draw(*shader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(3, 0, -3)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
+		MVP = projection * view * model;
+		shader->setMatrix(shader->getLocation("MVP"), MVP);
+		buffer->draw(*shader);
+
+		// pinta tercera fila
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -6)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
+		MVP = projection * view * model;
+		shader->setMatrix(shader->getLocation("MVP"), MVP);
+		buffer->draw(*shader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-3, 0, -6)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
+		MVP = projection * view * model;
+		shader->setMatrix(shader->getLocation("MVP"), MVP);
+		buffer->draw(*shader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(3, 0, -6)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
+		MVP = projection * view * model;
+		shader->setMatrix(shader->getLocation("MVP"), MVP);
+		buffer->draw(*shader);
+
+
 		//glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 		
 		// draw with glBegin ... glEnd
