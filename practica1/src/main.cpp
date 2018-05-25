@@ -57,9 +57,9 @@ int main() {
 
 	// define triangle
 	std::vector<Vertex> vertices = {
-		Vertex( 0,  1, 0, 1, 0, 0),
-		Vertex(-1, -1, 0, 0, 1, 0),
-		Vertex( 1, -1, 0, 0, 0, 1)
+		Vertex( 0,     0.5f, 0, 1, 0, 0),
+		Vertex(-0.5f, -0.5f, 0, 0, 1, 0),
+		Vertex( 0.5f, -0.5f, 0, 0, 0, 1)
 	};
 
 	std::vector<uint16_t> indexes = {
@@ -110,7 +110,7 @@ int main() {
 		//matriz
 		angle += deltaTime * 32;
 
-		glm::mat4 projection = glm::perspective(45.0f, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
 		glm::vec3 eye(0.0f, 0.0f, 6.0f);
 		glm::vec3 center(0.0f, 0.0f, 0.0f);
 		glm::vec3 up(0.0f, 1.0f, 0.0f);
