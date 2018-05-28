@@ -50,41 +50,28 @@ int main() {
 	// initialize opengl states
 	glEnable(GL_SCISSOR_TEST);
 	glEnable(GL_DEPTH_TEST);
-	//glEnableClientState(GL_VERTEX_ARRAY); // ***
-	//glEnableClientState(GL_COLOR_ARRAY); // ***
-	//glEnableVertexAttribArray(vposLoc);
-	//glEnableVertexAttribArray(vcolorLoc);
 
-	// define triangle
+	// define triangle vertex
 	std::vector<Vertex> vertices = {
 		Vertex( 0,     0.5f, 0, 1, 0, 0),
 		Vertex(-0.5f, -0.5f, 0, 0, 1, 0),
 		Vertex( 0.5f, -0.5f, 0, 0, 0, 1)
 	};
 
+	// define triangle indexes
 	std::vector<uint16_t> indexes = {
 		0, 1, 2
 	};
 
+	// create buffer with vertex and indexes
 	BufferPtr buffer = Buffer::createBuffer(vertices, indexes);
 
-	// store triangle in vram
-	//uint32_t vertexBuffer;
-	//glGenBuffers(1, &vertexBuffer);
-	//glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
-
-	// describe data for vertex buffer objects
-	//shader->setupAttribs();
-
-	//glVertexPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, x))); // ***
-	//glColorPointer(3, GL_FLOAT, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, r))); // ***
-	//glVertexAttribPointer(vposLoc, 2, GL_FLOAT, false, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, x)));
-	//glVertexAttribPointer(vcolorLoc, 3, GL_FLOAT, false, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, r)));
-
-	// describe data for vertex arrays
-	//glVertexPointer(2, GL_FLOAT, sizeof(Vertex), &vertices[0].x); // ***
-	//glColorPointer(3, GL_FLOAT, sizeof(Vertex), &vertices[0].r); // ***
+	// calculate matrices which does not change in each tick
+	glm::vec3 eye(0.0f, 0.0f, 6.0f);
+	glm::vec3 center(0.0f, 0.0f, 0.0f);
+	glm::vec3 up(0.0f, 1.0f, 0.0f);
+	glm::mat4 view = glm::lookAt(eye, center, up);
+	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
 
 	// main loop
 	double lastTime = glfwGetTime();
@@ -106,80 +93,27 @@ int main() {
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		// logic
 
-		//matriz
-		angle += deltaTime * 32;
-
+		// calculate projection matrix with the screen size of each tick
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
-		glm::vec3 eye(0.0f, 0.0f, 6.0f);
-		glm::vec3 center(0.0f, 0.0f, 0.0f);
-		glm::vec3 up(0.0f, 1.0f, 0.0f);
-		glm::mat4 view = glm::lookAt(eye, center, up);
-		//glm::mat4 model = glm::mat4(1.0f);
 
-		int i = shader->getLocation("MVP");
-		
+		// calculate rotation
+		angle += deltaTime * 32;
+		if (angle >= 360)
+		{
+			angle -= 360;
+		}
+		glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0));
 
-		// pinta primera fila
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
-		glm::mat4 MVP = projection * view * model;
-		shader->setMatrix(shader->getLocation("MVP"), MVP);
-		buffer->draw(*shader);
-
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(-3, 0, 0)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
-		MVP = projection * view * model;
-		shader->setMatrix(shader->getLocation("MVP"), MVP);
-		buffer->draw(*shader);
-
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(3, 0, 0)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
-		MVP = projection * view * model;
-		shader->setMatrix(shader->getLocation("MVP"), MVP);
-		buffer->draw(*shader);
-
-		// pinta segunda fila
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -3)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
-		MVP = projection * view * model;
-		shader->setMatrix(shader->getLocation("MVP"), MVP);
-		buffer->draw(*shader);
-
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(-3, 0, -3)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
-		MVP = projection * view * model;
-		shader->setMatrix(shader->getLocation("MVP"), MVP);
-		buffer->draw(*shader);
-
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(3, 0, -3)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
-		MVP = projection * view * model;
-		shader->setMatrix(shader->getLocation("MVP"), MVP);
-		buffer->draw(*shader);
-
-		// pinta tercera fila
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -6)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
-		MVP = projection * view * model;
-		shader->setMatrix(shader->getLocation("MVP"), MVP);
-		buffer->draw(*shader);
-
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(-3, 0, -6)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
-		MVP = projection * view * model;
-		shader->setMatrix(shader->getLocation("MVP"), MVP);
-		buffer->draw(*shader);
-
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(3, 0, -6)) * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, 1));
-		MVP = projection * view * model;
-		shader->setMatrix(shader->getLocation("MVP"), MVP);
-		buffer->draw(*shader);
-
-
-		//glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-		
-		// draw with glBegin ... glEnd
-		/*glBegin(GL_TRIANGLES);
-			glColor4f(1, 0, 0, 1);
-			glVertex2f(0, 1);
-			glColor4f(0, 1, 0, 1);
-			glVertex2f(-1, -1);
-			glColor4f(0, 0, 1, 1);
-			glVertex2f(1, -1);
-		glEnd();*/
+		// calculate model matrix of each triangle
+		for (size_t i = 0; i < 9; i++) {
+			glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f * (static_cast<float>(i % 3) - 1), 0, -3.0f * static_cast<float> (i / 3)));
+			glm::mat4 model = translate * rotate * scale;
+			glm::mat4 MVP = projection * view * model;
+			shader->setMatrix(shader->getLocation("MVP"), MVP);
+			buffer->draw(*shader);
+		}
 
 		// refresh screen
 		glfwSwapBuffers(win);
