@@ -8,7 +8,7 @@ typedef std::shared_ptr<Shader> ShaderPtr;
 
 class Shader {
 public:
-	static ShaderPtr createShader(const std::string vertexShaderSource, const std::string fragmentShaderSource);
+	static ShaderPtr createShader(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
 
 	// Devuelve el identificador de OpenGL del programa
 	uint32_t getId() const { return m_Id; }
@@ -27,18 +27,20 @@ public:
 	int getLocation(const char* name) const;
 
 	// Da valor a una variable uniform
-	void setInt(int loc, int val) { }
+	void setInt(int loc, int val);
 	void setFloat(int loc, float val);
 	void setVec3(int loc, const glm::vec3& vec);
 	void setVec4(int loc, const glm::vec4& vec);
 	void setMatrix(int loc, const glm::mat4& matrix);
 
 private:
-	Shader(const std::string vertexShaderSource, const std::string fragmentShaderSource);
+	static char errorLog[1024];
+
+	Shader(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
 	~Shader();
+
 	uint32_t m_Id;
 	int      m_vposLoc;
 	int      m_vcolorLoc;
 	int      m_MVPLoc;
-	static char errorLog[1024];
 };

@@ -1,12 +1,9 @@
 #pragma once
+#include "common.h"
 
 struct Vertex {
-	float x, y, z;
-	float r, g, b;
+	glm::vec3 pos;
+	glm::vec3 color;
 
-	Vertex(float x, float y, float z, float r, float g, float b)
-	:
-		x(x), y(y), z(z),
-		r(r), g(g), b(b)
-	{}
+	Vertex(const glm::vec3& _pos, const glm::vec3& _color) : pos(_pos), color(_color) {}
 };

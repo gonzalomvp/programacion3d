@@ -16,8 +16,8 @@ public:
 private:
 	Buffer(const std::vector<Vertex>& vertices, const std::vector<uint16_t>& indexes);
 	~Buffer();
+
 	uint32_t m_vertexBuffer;
 	uint32_t m_indexBuffer;
-
-	uint32_t m_indexCount;
+	uint32_t m_indexesCount;
 };
