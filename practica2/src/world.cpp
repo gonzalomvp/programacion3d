@@ -8,6 +8,15 @@ void World::addEntity(const EntityPtr& entity) {
 	}
 }
 
+// Revisar
+void World::removeEntity(const EntityPtr& entity) {
+	m_entities.erase(std::find(m_entities.begin(), m_entities.end(), entity));
+	CameraPtr camera = std::dynamic_pointer_cast<Camera>(entity);
+	if (camera) {
+		m_cameras.erase(std::find(m_cameras.begin(), m_cameras.end(), camera));
+	}
+}
+
 void World::update(float deltaTime) {
 	for (size_t i = 0; i < m_entities.size(); ++i) {
 		m_entities[i]->update(deltaTime);

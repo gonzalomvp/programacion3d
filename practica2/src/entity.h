@@ -7,7 +7,7 @@ typedef std::shared_ptr<Entity> EntityPtr;
 
 class Entity {
 public:
-	Entity() {}
+	Entity() : m_position(glm::vec3()), m_rotation(glm::vec3()), m_scale(glm::vec3(1.0f)) {}
 	virtual ~Entity() {}
 
 	const glm::vec3& getPosition() const                 { return m_position; }

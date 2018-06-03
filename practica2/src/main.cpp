@@ -101,6 +101,7 @@ int main() {
 		angle += 32 * deltaTime;
 		if (angle >= 360) {
 			angle -= 360;
+			//world->removeEntity(camera);
 		}
 
 		for (size_t i = 0; i < world->getNumEntities(); i++) {
