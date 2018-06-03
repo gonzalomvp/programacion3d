@@ -5,8 +5,12 @@
 #include "common.h"
 #include "../lib/glfw/glfw3.h"
 #include "buffer.h"
+#include "camera.h"
+#include "mesh.h"
+#include "model.h"
 #include "shader.h"
 #include "state.h"
+#include "world.h"
 #include <vector>
 
 #define SCREEN_WIDTH 800
@@ -15,107 +19,107 @@
 bool init();
 
 int main() {
-	//// init glfw
-	//if ( !glfwInit() ) {
-	//	std::cout << "could not initialize glfw" << std::endl;
-	//	return -1;
-	//}
+	// init glfw
+	if ( !glfwInit() ) {
+		std::cout << "could not initialize glfw" << std::endl;
+		return -1;
+	}
 
-	//// create window
-	////glfwWindowHint(GLFW_RESIZABLE, false);
-	//glfwWindowHint(GLFW_SAMPLES, 8);
-	//GLFWwindow* win = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "", nullptr, nullptr);
-	//if (!win) {
-	//	std::cout << "could not create opengl window" << std::endl;
-	//	glfwTerminate();
-	//	return -1;
-	//}
-	//glfwMakeContextCurrent(win);
+	// create window
+	//glfwWindowHint(GLFW_RESIZABLE, false);
+	glfwWindowHint(GLFW_SAMPLES, 8);
+	GLFWwindow* win = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "", nullptr, nullptr);
+	if (!win) {
+		std::cout << "could not create opengl window" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
+	glfwMakeContextCurrent(win);
 
-	//if ( !init() ) {
-	//	std::cout << "could not initialize opengl extensions" << std::endl;
-	//	glfwTerminate();
-	//	return -1;
-	//}
+	if ( !init() ) {
+		std::cout << "could not initialize opengl extensions" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
 
-	//
+	// Create World
+	WorldPtr world = std::make_shared<World>();
 
-	//// use program and get locations
-	//shader->use();
+	// define triangle vertices
+	std::vector<Vertex> vertices = {
+		Vertex( glm::vec3( 0,     0.5f, 0),  glm::vec3(1, 0, 0)),
+		Vertex( glm::vec3(-0.5f, -0.5f, 0),  glm::vec3(0, 1, 0)),
+		Vertex( glm::vec3( 0.5f, -0.5f, 0),  glm::vec3(0, 0, 1))
+	};
 
-	//// define triangle vertices
-	//std::vector<Vertex> vertices = {
-	//	Vertex( glm::vec3( 0,     0.5f, 0),  glm::vec3(1, 0, 0)),
-	//	Vertex( glm::vec3(-0.5f, -0.5f, 0),  glm::vec3(0, 1, 0)),
-	//	Vertex( glm::vec3( 0.5f, -0.5f, 0),  glm::vec3(0, 0, 1))
-	//};
+	// define triangle indexes
+	std::vector<uint16_t> indexes = {
+		0, 1, 2
+	};
 
-	//// define triangle indexes
-	//std::vector<uint16_t> indexes = {
-	//	0, 1, 2
-	//};
+	// create buffer with vertices and indexes
+	BufferPtr buffer = Buffer::createBuffer(vertices, indexes);
+	if (!buffer) {
+		std::cout << "could not create Buffer" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
 
-	//// create buffer with vertices and indexes
-	//BufferPtr buffer = Buffer::createBuffer(vertices, indexes);
-	//if (!buffer) {
-	//	std::cout << "could not create Buffer" << std::endl;
-	//	glfwTerminate();
-	//	return -1;
-	//}
+	MeshPtr triangleMesh = std::make_shared<Mesh>();
+	triangleMesh->addBuffer(buffer);
 
-	//// calculate matrices which does not change every tick
-	//glm::vec3 eye(0.0f, 0.0f, 6.0f);
-	//glm::vec3 center(0.0f, 0.0f, 0.0f);
-	//glm::vec3 up(0.0f, 1.0f, 0.0f);
-	//glm::mat4 view = glm::lookAt(eye, center, up);
-	//glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	for (size_t i = 0; i < 9; i++) {
+		ModelPtr model = std::make_shared<Model>(triangleMesh);
+		model->setPosition(glm::vec3(3.0f * (static_cast<float>(i % 3) - 1), 0, -3.0f * static_cast<float> (i / 3)));
+		model->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+		model->setScale(glm::vec3(1.0f, 1.0f, 1.0f));
+		world->addEntity(model);
+	}
 
-	//// main loop
-	//double lastTime = glfwGetTime();
-	//float angle = 0.0f;
-	//while ( !glfwWindowShouldClose(win) && !glfwGetKey(win, GLFW_KEY_ESCAPE) ) {
-	//	// get delta time
-	//	float deltaTime = static_cast<float>(glfwGetTime() - lastTime);
-	//	lastTime = glfwGetTime();
+	CameraPtr camera = std::make_shared<Camera>();
+	camera->setPosition(glm::vec3(0.0f, 0.0f, 6.0f));
+	camera->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.0f));
+	world->addEntity(camera);
 
-	//	// get window size
-	//	int screenWidth, screenHeight;
-	//	glfwGetWindowSize(win, &screenWidth, &screenHeight);
+	// main loop
+	double lastTime = glfwGetTime();
+	float angle = 0.0f;
+	while ( !glfwWindowShouldClose(win) && !glfwGetKey(win, GLFW_KEY_ESCAPE) ) {
+		// get delta time
+		float deltaTime = static_cast<float>(glfwGetTime() - lastTime);
+		lastTime = glfwGetTime();
 
-	//	// setup viewport
-	//	glViewport(0, 0, screenWidth, screenHeight);
-	//	glScissor(0, 0, screenWidth, screenHeight);
+		// get window size
+		int screenWidth, screenHeight;
+		glfwGetWindowSize(win, &screenWidth, &screenHeight);
 
-	//	// calculate projection matrix with the screen size in each tick
-	//	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
+		// calculate projection matrix with the screen size in each tick
+		camera->setProjection(glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f));
+		camera->setViewport(glm::ivec4(0, 0, screenWidth, screenHeight));
+		// calculate rotation
+		angle += 32 * deltaTime;
+		if (angle >= 360) {
+			angle -= 360;
+		}
 
-	//	// calculate rotation
-	//	angle += 32 * deltaTime;
-	//	if (angle >= 360) {
-	//		angle -= 360;
-	//	}
-	//	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1.0f, 0));
+		for (size_t i = 0; i < world->getNumEntities(); i++) {
+			CameraPtr camera = std::dynamic_pointer_cast<Camera>(world->getEntity(i));
+			if (!camera) {
+				world->getEntity(i)->setRotation(glm::vec3(0.0f, angle, 0.0f));
+			}
+		}
+		
+		world->update(deltaTime);
+		world->draw();
 
-	//	// clear screen
-	//	glClearColor(0, 0, 0, 1);
-	//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// refresh screen
+		glfwSwapBuffers(win);
+		glfwPollEvents();
+	}
 
-	//	// calculate model matrix of each triangle and draw it
-	//	for (size_t i = 0; i < 9; i++) {
-	//		glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f * (static_cast<float>(i % 3) - 1), 0, -3.0f * static_cast<float> (i / 3)));
-	//		glm::mat4 model = translate * rotate * scale;
-	//		glm::mat4 MVP = projection * view * model;
-	//		shader->setMatrix(shader->getLocation("MVP"), MVP);
-	//		buffer->draw(*shader);
-	//	}
-
-	//	// refresh screen
-	//	glfwSwapBuffers(win);
-	//	glfwPollEvents();
-	//}
-
-	//// shutdown
-	//glfwTerminate();
+	// shutdown
+	glfwTerminate();
 }
 
 bool init() {

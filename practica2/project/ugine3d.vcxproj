@@ -147,6 +147,7 @@
     <ClInclude Include="..\src\shader.h" />
     <ClInclude Include="..\src\state.h" />
     <ClInclude Include="..\src\vertex.h" />
+    <ClInclude Include="..\src\world.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\lib\glew\glew.c" />
@@ -159,6 +160,7 @@
     <ClCompile Include="..\src\model.cpp" />
     <ClCompile Include="..\src\shader.cpp" />
     <ClCompile Include="..\src\state.cpp" />
+    <ClCompile Include="..\src\world.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\data\fragment.glsl" />

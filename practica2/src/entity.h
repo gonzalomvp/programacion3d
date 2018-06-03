@@ -2,9 +2,12 @@
 
 #include "common.h"
 
+class Entity;
+typedef std::shared_ptr<Entity> EntityPtr;
+
 class Entity {
 public:
-	Entity();
+	Entity() {}
 	virtual ~Entity() {}
 
 	const glm::vec3& getPosition() const                 { return m_position; }

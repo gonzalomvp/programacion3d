@@ -2,6 +2,9 @@
 
 #include "entity.h"
 
+class Camera;
+typedef std::shared_ptr<Camera> CameraPtr;
+
 class Camera : public Entity {
 public:
 	const glm::mat4&  getProjection() const                 { return m_projection;  }
