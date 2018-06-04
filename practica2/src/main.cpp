@@ -18,6 +18,10 @@
 
 bool init();
 
+void rotateTriangle(Entity& entity, float deltaTime) {
+	entity.setRotation(glm::vec3(entity.getRotation().x, entity.getRotation().y + 32.0f * deltaTime, entity.getRotation().z));
+}
+
 int main() {
 	// init glfw
 	if ( !glfwInit() ) {
@@ -73,6 +77,7 @@ int main() {
 		model->setPosition(glm::vec3(3.0f * (static_cast<float>(i % 3) - 1), 0, -3.0f * static_cast<float> (i / 3)));
 		model->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
 		model->setScale(glm::vec3(1.0f, 1.0f, 1.0f));
+		model->setCallback(rotateTriangle);
 		world->addEntity(model);
 	}
 
@@ -84,7 +89,6 @@ int main() {
 
 	// main loop
 	double lastTime = glfwGetTime();
-	float angle = 0.0f;
 	while ( !glfwWindowShouldClose(win) && !glfwGetKey(win, GLFW_KEY_ESCAPE) ) {
 		// get delta time
 		float deltaTime = static_cast<float>(glfwGetTime() - lastTime);
@@ -97,19 +101,6 @@ int main() {
 		// calculate projection matrix with the screen size in each tick
 		camera->setProjection(glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f));
 		camera->setViewport(glm::ivec4(0, 0, screenWidth, screenHeight));
-		// calculate rotation
-		angle += 32 * deltaTime;
-		if (angle >= 360) {
-			angle -= 360;
-			//world->removeEntity(camera);
-		}
-
-		for (size_t i = 0; i < world->getNumEntities(); i++) {
-			CameraPtr camera = std::dynamic_pointer_cast<Camera>(world->getEntity(i));
-			if (!camera) {
-				world->getEntity(i)->setRotation(glm::vec3(0.0f, angle, 0.0f));
-			}
-		}
 		
 		world->update(deltaTime);
 		world->draw();
@@ -130,14 +121,13 @@ bool init() {
 	if (glewInit() == GLEW_OK) {
 		glEnable(GL_SCISSOR_TEST);
 		glEnable(GL_DEPTH_TEST);
-		ret = true;
-	}
 
-	// create default shader
-	std::shared_ptr<Shader> shader = Shader::createShader(readString("data/vertex.glsl"), readString("data/fragment.glsl"));
-	if (shader) {
-		State::defaultShader = shader;
-		ret = true;
+		// create default shader
+		std::shared_ptr<Shader> shader = Shader::createShader(readString("data/vertex.glsl"), readString("data/fragment.glsl"));
+		if (shader) {
+			State::defaultShader = shader;
+			ret = true;
+		}
 	}
 
 	return ret;

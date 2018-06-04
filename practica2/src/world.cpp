@@ -1,4 +1,5 @@
 #include "world.h"
+#include <algorithm>
 
 void World::addEntity(const EntityPtr& entity) {
 	m_entities.push_back(entity);
@@ -10,10 +11,16 @@ void World::addEntity(const EntityPtr& entity) {
 
 // Revisar
 void World::removeEntity(const EntityPtr& entity) {
-	m_entities.erase(std::find(m_entities.begin(), m_entities.end(), entity));
+	m_entities.erase(
+		std::remove(m_entities.begin(), m_entities.end(), entity),
+		m_entities.end()
+	);
 	CameraPtr camera = std::dynamic_pointer_cast<Camera>(entity);
 	if (camera) {
-		m_cameras.erase(std::find(m_cameras.begin(), m_cameras.end(), camera));
+		m_cameras.erase(
+			std::remove(m_cameras.begin(), m_cameras.end(), camera),
+			m_cameras.end()
+		);
 	}
 }
 
