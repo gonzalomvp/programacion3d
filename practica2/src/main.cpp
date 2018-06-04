@@ -19,7 +19,10 @@
 bool init();
 
 void rotateTriangle(Entity& entity, float deltaTime) {
-	entity.setRotation(glm::vec3(entity.getRotation().x, entity.getRotation().y + 32.0f * deltaTime, entity.getRotation().z));
+	// with quaternions
+	entity.setRotation(entity.getRotation() * glm::quat(glm::radians(glm::vec3(0.0f, 32 * deltaTime, 0.0f))));
+	// with euler angles
+	//entity.setRotation(glm::vec3(entity.getRotation().x, entity.getRotation().y + 32.0f * deltaTime, entity.getRotation().z));
 }
 
 int main() {
@@ -75,15 +78,12 @@ int main() {
 	for (size_t i = 0; i < 9; i++) {
 		ModelPtr model = std::make_shared<Model>(triangleMesh);
 		model->setPosition(glm::vec3(3.0f * (static_cast<float>(i % 3) - 1), 0, -3.0f * static_cast<float> (i / 3)));
-		model->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
-		model->setScale(glm::vec3(1.0f, 1.0f, 1.0f));
 		model->setCallback(rotateTriangle);
 		world->addEntity(model);
 	}
 
 	CameraPtr camera = std::make_shared<Camera>();
 	camera->setPosition(glm::vec3(0.0f, 0.0f, 6.0f));
-	camera->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
 	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.0f));
 	world->addEntity(camera);
 

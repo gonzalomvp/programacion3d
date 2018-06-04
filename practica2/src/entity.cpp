@@ -7,5 +7,8 @@ void Entity::update(float deltaTime) {
 }
 
 void Entity::move(const glm::vec3& vec) {
-	m_position += glm::quat(m_rotation) * vec;
+	// with quaternions
+	m_position += m_rotation * vec;
+	// with euler angles
+	//m_position += glm::quat(m_rotation) * vec;
 }

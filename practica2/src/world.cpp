@@ -9,7 +9,6 @@ void World::addEntity(const EntityPtr& entity) {
 	}
 }
 
-// Revisar
 void World::removeEntity(const EntityPtr& entity) {
 	m_entities.erase(
 		std::remove(m_entities.begin(), m_entities.end(), entity),
