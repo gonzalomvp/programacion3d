@@ -65,7 +65,7 @@ int main() {
 	MeshPtr triangleMesh = Mesh::createMesh();
 	triangleMesh->addBuffer(buffer);
 
-	for (size_t i = 0; i < 9; i++) {
+	for (size_t i = 0; i < 9; ++i) {
 		ModelPtr model = Model::createModel(triangleMesh);
 		model->setPosition(glm::vec3(3.0f * (static_cast<float>(i % 3) - 1), 0, -3.0f * static_cast<float> (i / 3)));
 		model->setCallback(rotateTriangle);

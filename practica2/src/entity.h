@@ -28,7 +28,7 @@ public:
 	virtual void     draw       () {}
 
 protected:
-	Entity() : m_position(), m_rotation(), m_scale(1.0f) {}
+	Entity() : m_position(), m_rotation(), m_scale(1.0f), m_callback(nullptr) {}
 	virtual ~Entity() {}
 
 	glm::vec3    m_position;
