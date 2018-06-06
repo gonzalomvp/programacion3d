@@ -8,9 +8,13 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
+float g_angle = 0.0f;
+
 void rotateTriangle(Entity& entity, float deltaTime) {
 	// with quaternions
-	entity.setRotation(entity.getRotation() * glm::quat(glm::radians(glm::vec3(0.0f, 32 * deltaTime, 0.0f))));
+	entity.setRotation(glm::quat(glm::radians(glm::vec3(0.0f, g_angle, 0.0f))));
+	// this other version produces a blink when rotation = 360
+	// entity.setRotation(entity.getRotation() * glm::quat(glm::radians(glm::vec3(0.0f, 32 * deltaTime, 0.0f))));
 	// with euler angles
 	//entity.setRotation(glm::vec3(entity.getRotation().x, entity.getRotation().y + 32.0f * deltaTime, entity.getRotation().z));
 }
@@ -92,6 +96,12 @@ int main() {
 		camera->setProjection(glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f));
 		camera->setViewport(glm::ivec4(0, 0, screenWidth, screenHeight));
 		
+		// calculate rotation angle
+		g_angle += 32 * deltaTime;
+		if (g_angle >= 360) {
+			g_angle -= 360;
+		}
+
 		world->update(deltaTime);
 		world->draw();
 
