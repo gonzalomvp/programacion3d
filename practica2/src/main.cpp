@@ -2,21 +2,11 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup /NODEFAULTLIB:MSVCRT")
 #endif
 
-#include "common.h"
+#include "ugine3d.h"
 #include "../lib/glfw/glfw3.h"
-#include "buffer.h"
-#include "camera.h"
-#include "mesh.h"
-#include "model.h"
-#include "shader.h"
-#include "state.h"
-#include "world.h"
-#include <vector>
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
-
-bool init();
 
 void rotateTriangle(Entity& entity, float deltaTime) {
 	// with quaternions
@@ -50,7 +40,7 @@ int main() {
 	}
 
 	// Create World
-	WorldPtr world = std::make_shared<World>();
+	WorldPtr world = World::createWorld();
 
 	// define triangle vertices
 	std::vector<Vertex> vertices = {
@@ -72,17 +62,17 @@ int main() {
 		return -1;
 	}
 
-	MeshPtr triangleMesh = std::make_shared<Mesh>();
+	MeshPtr triangleMesh = Mesh::createMesh();
 	triangleMesh->addBuffer(buffer);
 
 	for (size_t i = 0; i < 9; i++) {
-		ModelPtr model = std::make_shared<Model>(triangleMesh);
+		ModelPtr model = Model::createModel(triangleMesh);
 		model->setPosition(glm::vec3(3.0f * (static_cast<float>(i % 3) - 1), 0, -3.0f * static_cast<float> (i / 3)));
 		model->setCallback(rotateTriangle);
 		world->addEntity(model);
 	}
 
-	CameraPtr camera = std::make_shared<Camera>();
+	CameraPtr camera = Camera::createCamera();
 	camera->setPosition(glm::vec3(0.0f, 0.0f, 6.0f));
 	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.0f));
 	world->addEntity(camera);
@@ -114,21 +104,3 @@ int main() {
 	glfwTerminate();
 }
 
-bool init() {
-	bool ret = false;
-
-	// initialize opengl extensions and opengl states
-	if (glewInit() == GLEW_OK) {
-		glEnable(GL_SCISSOR_TEST);
-		glEnable(GL_DEPTH_TEST);
-
-		// create default shader
-		std::shared_ptr<Shader> shader = Shader::createShader(readString("data/vertex.glsl"), readString("data/fragment.glsl"));
-		if (shader) {
-			State::defaultShader = shader;
-			ret = true;
-		}
-	}
-
-	return ret;
-}

@@ -4,7 +4,7 @@ char Shader::errorLog[1024];
 
 ShaderPtr Shader::createShader(const std::string& vertexShaderSource, const std::string& fragmentShaderSource)
 {
-	std::shared_ptr<Shader> shader(new Shader(vertexShaderSource, fragmentShaderSource), [](Shader* p) { delete p; });
+	ShaderPtr shader(new Shader(vertexShaderSource, fragmentShaderSource), [](Shader* p) { delete p; });
 	
 	if (shader->m_Id == 0) {
 		shader = nullptr;

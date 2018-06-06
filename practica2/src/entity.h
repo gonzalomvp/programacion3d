@@ -8,8 +8,7 @@ typedef void(*CallbackFunc) (Entity&, float);
 
 class Entity {
 public:
-	Entity() : m_position(), m_rotation(), m_scale(1.0f) {}
-	virtual ~Entity() {}
+	//static EntityPtr createEntity() { return EntityPtr(new Entity(), [](Entity* p) { delete p; }); }
 
 	const glm::vec3& getPosition() const                 { return m_position;     }
 	void             setPosition(const glm::vec3& pos)   { m_position = pos;      }
@@ -29,6 +28,9 @@ public:
 	virtual void     draw       () {}
 
 protected:
+	Entity() : m_position(), m_rotation(), m_scale(1.0f) {}
+	virtual ~Entity() {}
+
 	glm::vec3    m_position;
 	// with quaternions
 	glm::quat    m_rotation;
