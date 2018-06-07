@@ -9,4 +9,8 @@ public:
 	static glm::mat4 projectionMatrix;
 	static glm::mat4 viewMatrix;
 	static glm::mat4 modelMatrix;
+
+private:
+	State();
+	~State();
 };
