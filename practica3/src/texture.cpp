@@ -3,6 +3,8 @@
 TexturePtr Texture::load(const char* filename) {
 	// Load image with STB
 	int w, h;
+	
+	stbi_set_flip_vertically_on_load(true);
 	uint8_t* buffer = stbi_load(filename, &w, &h, nullptr, 4);
 	if (!buffer) return nullptr;
 
