@@ -46,41 +46,77 @@ int main() {
 	// Create World
 	WorldPtr world = World::createWorld();
 
-	// define triangle vertices
+	// Create Cube Mesh
+	MeshPtr cubeMesh = Mesh::createMesh();
+
+	// define front faces vertices
 	std::vector<Vertex> vertices = {
-		Vertex( glm::vec3(-0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
 		Vertex( glm::vec3(-0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 0)),
+		Vertex( glm::vec3(-0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
 		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
 		Vertex( glm::vec3(-0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 1)),
 		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 1)),
 
-		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
 		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 0)),
+		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
 		Vertex( glm::vec3( 0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 0)),
 		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3( 0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 1)),
 		Vertex( glm::vec3( 0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+		Vertex( glm::vec3( 0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 1)),
+
+		Vertex( glm::vec3( 0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 0)),
+		Vertex( glm::vec3( 0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
+		Vertex( glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+		Vertex( glm::vec3( 0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
+		Vertex( glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+		Vertex( glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 1)),
+
+		Vertex( glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 0)),
+		Vertex( glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
+		Vertex( glm::vec3(-0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+		Vertex( glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
+		Vertex( glm::vec3(-0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+		Vertex( glm::vec3(-0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 1))
 	};
 
-	// define triangle indexes
-	std::vector<uint16_t> indexes = {
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-	};
-
-	// create buffer with vertices and indexes
-	BufferPtr buffer = Buffer::createBuffer(vertices, indexes);
-	if (!buffer) {
-		std::cout << "could not create Buffer" << std::endl;
-		glfwTerminate();
-		return -1;
+	// define front faces vertices
+	std::vector<uint16_t> indexes;
+	for (uint16_t i = 0; i < 24; ++i) {
+		indexes.push_back(i);
 	}
 
-	MeshPtr triangleMesh = Mesh::createMesh();
-	TexturePtr texture = Texture::load("data/front.png");
-	triangleMesh->addBuffer(buffer, Material::create(texture));
+	// Add front faces buffer to the cube mesh
+	cubeMesh->addBuffer(Buffer::createBuffer(vertices, indexes), Material::create(Texture::load("data/front.png")));
 
-	ModelPtr model = Model::createModel(triangleMesh);
+	// define top and bottom faces vertices
+	vertices.clear();
+	vertices = {
+		Vertex( glm::vec3(-0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 0)),
+		Vertex( glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
+		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+		Vertex( glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
+		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+		Vertex( glm::vec3( 0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 1)),
+
+		Vertex( glm::vec3(-0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 0)),
+		Vertex( glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
+		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+		Vertex( glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
+		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+		Vertex( glm::vec3( 0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 1)),
+	};
+
+	// define top and bottom faces vertices
+	indexes.clear();
+	for (uint16_t i = 0; i < 12; ++i) {
+		indexes.push_back(i);
+	}
+
+	// Add top and bottom faces buffer to the cube mesh
+	cubeMesh->addBuffer(Buffer::createBuffer(vertices, indexes), Material::create(Texture::load("data/top.png")));
+
+	ModelPtr model = Model::createModel(cubeMesh);
 	model->setPosition(glm::vec3());
 	model->setCallback(rotateTriangle);
 	world->addEntity(model);
