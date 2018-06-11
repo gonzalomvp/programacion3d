@@ -5,7 +5,7 @@ varying vec2 ftex;
 
 void main() {
 	if (useTexture) {
-		gl_FragColor = texture2D(texSampler, ftex);
+		gl_FragColor = texture2D(texSampler, ftex) * vec4(fcolor, 1);
 	}
 	else {
 		gl_FragColor = vec4(fcolor, 1);
