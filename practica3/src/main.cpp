@@ -48,17 +48,24 @@ int main() {
 
 	// define triangle vertices
 	std::vector<Vertex> vertices = {
-		Vertex( glm::vec3(-0.5f,  0.5f, 0),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3(-0.5f, -0.5f, 0),  glm::vec3(1), glm::vec2(0, 0)),
-		Vertex( glm::vec3( 0.5f, -0.5f, 0),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3(-0.5f,  0.5f, 0),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3( 0.5f,  0.5f, 0),  glm::vec3(1), glm::vec2(1, 1)),
-		Vertex( glm::vec3( 0.5f, -0.5f, 0),  glm::vec3(1), glm::vec2(1, 0))
+		Vertex( glm::vec3(-0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
+		Vertex( glm::vec3(-0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 0)),
+		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+		Vertex( glm::vec3(-0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
+		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 1)),
+		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+
+		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
+		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 0)),
+		Vertex( glm::vec3( 0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 0)),
+		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
+		Vertex( glm::vec3( 0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 1)),
+		Vertex( glm::vec3( 0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 0)),
 	};
 
 	// define triangle indexes
 	std::vector<uint16_t> indexes = {
-		0, 1, 2, 3, 4, 5
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 	};
 
 	// create buffer with vertices and indexes
