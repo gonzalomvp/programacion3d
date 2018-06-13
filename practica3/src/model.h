@@ -8,7 +8,7 @@ typedef std::shared_ptr<Model> ModelPtr;
 
 class Model : public Entity {
 public:
-	static ModelPtr createModel(const MeshPtr& mesh) { return ModelPtr(new Model(mesh), [](Model* p) { delete p; }); }
+	static ModelPtr create(const MeshPtr& mesh) { return ModelPtr(new Model(mesh), [](Model* p) { delete p; }); }
 
 	virtual void draw() override;
 

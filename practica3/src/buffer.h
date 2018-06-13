@@ -9,7 +9,7 @@ typedef std::shared_ptr<Buffer> BufferPtr;
 
 class Buffer {
 public:
-	static BufferPtr createBuffer(const std::vector<Vertex>& vertices, const std::vector<uint16_t>& indexes);
+	static BufferPtr create(const std::vector<Vertex>& vertices, const std::vector<uint16_t>& indexes);
 	void draw(const Shader& shader) const;
 
 private:

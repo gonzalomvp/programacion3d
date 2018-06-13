@@ -8,7 +8,7 @@ typedef std::shared_ptr<Shader> ShaderPtr;
 
 class Shader {
 public:
-	static ShaderPtr createShader(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
+	static ShaderPtr create(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
 
 	// Devuelve el identificador de OpenGL del programa
 	uint32_t getId() const { return m_Id; }

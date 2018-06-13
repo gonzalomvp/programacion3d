@@ -6,10 +6,7 @@ void Camera::prepare() {
 	State::projectionMatrix = m_projection;
 
 	//Calculate view matix
-	// with quaternions
-	glm::mat4 viewMatrix = glm::rotate(glm::mat4(), -glm::angle(m_rotation), glm::axis(m_rotation));
-	// with euler angles
-	//glm::mat4 viewMatrix = glm::rotate(glm::mat4(), -glm::angle(glm::quat(glm::radians(m_rotation))), glm::axis(glm::quat(glm::radians(m_rotation))));
+	glm::mat4 viewMatrix = glm::rotate(glm::mat4(), -glm::angle(m_quat), glm::axis(m_quat));
 	viewMatrix = glm::translate(viewMatrix, -m_position);
 	State::viewMatrix = viewMatrix;
 

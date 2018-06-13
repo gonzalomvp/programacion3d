@@ -8,16 +8,24 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
-float g_angle = 0.0f;
+struct CubeData;
+typedef std::shared_ptr<CubeData> CubeDataPtr;
 
-void rotateTriangle(Entity& entity, float deltaTime) {
-	// with quaternions
-	entity.setRotation(glm::quat(glm::radians(glm::vec3(0.0f, g_angle, 0.0f))));
-	// this other version produces a blink when rotation = 360
-	// entity.setRotation(entity.getRotation() * glm::quat(glm::radians(glm::vec3(0.0f, 32 * deltaTime, 0.0f))));
-	// with euler angles
-	//entity.setRotation(glm::vec3(entity.getRotation().x, entity.getRotation().y + 32.0f * deltaTime, entity.getRotation().z));
-}
+struct CubeData {
+	float angle;
+	float rotationSpeed;
+
+	CubeData(float initialAngle, float rotationSpeed) : angle(initialAngle), rotationSpeed(rotationSpeed) {}
+
+	static void update(Entity& entity, float deltaTime){
+		CubeDataPtr data = std::static_pointer_cast<CubeData>(entity.getUserData());
+		data->angle += data->rotationSpeed * deltaTime;
+		if (data->angle >= 360) {
+			data->angle -= 360;
+		}
+		entity.setEuler(glm::vec3(0.0f, data->angle, 0.0f));
+	}
+};
 
 int main() {
 	// init glfw
@@ -44,10 +52,10 @@ int main() {
 	}
 
 	// Create World
-	WorldPtr world = World::createWorld();
+	WorldPtr world = World::create();
 
 	// Create Cube Mesh
-	MeshPtr cubeMesh = Mesh::createMesh();
+	MeshPtr cubeMesh = Mesh::create();
 
 	// define front faces vertices
 	std::vector<Vertex> vertices = {
@@ -87,7 +95,7 @@ int main() {
 	}
 
 	// Add front faces buffer to the cube mesh
-	cubeMesh->addBuffer(Buffer::createBuffer(vertices, indexes), Material::create(Texture::load("data/front.png")));
+	cubeMesh->addBuffer(Buffer::create(vertices, indexes), Material::create(Texture::load("data/front.png")));
 
 	// define top and bottom faces vertices
 	vertices.clear();
@@ -114,16 +122,17 @@ int main() {
 	}
 
 	// Add top and bottom faces buffer to the cube mesh
-	cubeMesh->addBuffer(Buffer::createBuffer(vertices, indexes), Material::create(Texture::load("data/top.png")));
+	cubeMesh->addBuffer(Buffer::create(vertices, indexes), Material::create(Texture::load("data/top.png")));
 
-	ModelPtr model = Model::createModel(cubeMesh);
+	ModelPtr model = Model::create(cubeMesh);
 	model->setPosition(glm::vec3());
-	model->setCallback(rotateTriangle);
+	model->setCallback(CubeData::update);
+	model->setUserData(std::make_shared<CubeData>(0.0f, 32.0f));
 	world->addEntity(model);
 
-	CameraPtr camera = Camera::createCamera();
+	CameraPtr camera = Camera::create();
 	camera->setPosition(glm::vec3(0.0f, 1.0f, 3.0f));
-	camera->setRotation(glm::quat(glm::radians(glm::vec3(-20.0f, 0.0f, 0.0f))));
+	camera->setEuler(glm::vec3(-20.0f, 0.0f, 0.0f));
 	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.0f));
 	world->addEntity(camera);
 
@@ -141,12 +150,6 @@ int main() {
 		// calculate projection matrix with the screen size in each tick
 		camera->setProjection(glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f));
 		camera->setViewport(glm::ivec4(0, 0, screenWidth, screenHeight));
-		
-		// calculate rotation angle
-		g_angle += 32 * deltaTime;
-		if (g_angle >= 360) {
-			g_angle -= 360;
-		}
 
 		world->update(deltaTime);
 		world->draw();

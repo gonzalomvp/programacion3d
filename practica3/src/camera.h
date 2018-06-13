@@ -7,7 +7,7 @@ typedef std::shared_ptr<Camera> CameraPtr;
 
 class Camera : public Entity {
 public:
-	static CameraPtr  createCamera() { return CameraPtr(new Camera(), [](Camera* p) { delete p; }); }
+	static CameraPtr  create() { return CameraPtr(new Camera(), [](Camera* p) { delete p; }); }
 
 	const glm::mat4&  getProjection() const                 { return m_projection;  }
 	void              setProjection(const glm::mat4& proj)  { m_projection = proj;  }

@@ -12,7 +12,7 @@ bool init() {
 		glEnable(GL_DEPTH_TEST);
 
 		// create default shader
-		ShaderPtr shader = Shader::createShader(readString("data/vertex.glsl"), readString("data/fragment.glsl"));
+		ShaderPtr shader = Shader::create(readString("data/vertex.glsl"), readString("data/fragment.glsl"));
 		if (shader) {
 			State::defaultShader = shader;
 			ret = true;

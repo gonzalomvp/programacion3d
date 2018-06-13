@@ -2,7 +2,7 @@
 
 char Shader::errorLog[1024];
 
-ShaderPtr Shader::createShader(const std::string& vertexShaderSource, const std::string& fragmentShaderSource)
+ShaderPtr Shader::create(const std::string& vertexShaderSource, const std::string& fragmentShaderSource)
 {
 	ShaderPtr shader(new Shader(vertexShaderSource, fragmentShaderSource), [](Shader* p) { delete p; });
 	

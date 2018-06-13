@@ -8,7 +8,7 @@ typedef std::shared_ptr<World> WorldPtr;
 
 class World {
 public:
-	static WorldPtr  createWorld() { return WorldPtr(new World(), [](World* p) { delete p; }); }
+	static WorldPtr  create() { return WorldPtr(new World(), [](World* p) { delete p; }); }
 
 	void             addEntity     (const EntityPtr& entity);
 	void             removeEntity  (const EntityPtr& entity);

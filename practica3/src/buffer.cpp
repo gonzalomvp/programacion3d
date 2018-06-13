@@ -1,7 +1,7 @@
 #include "buffer.h"
 #include "shader.h"
 
-BufferPtr Buffer::createBuffer(const std::vector<Vertex>& vertices, const std::vector<uint16_t>& indexes) {
+BufferPtr Buffer::create(const std::vector<Vertex>& vertices, const std::vector<uint16_t>& indexes) {
 	BufferPtr buffer(new Buffer(vertices, indexes), [](Buffer* p) { delete p; });
 	return buffer;
 }

@@ -11,6 +11,6 @@ public:
 	static glm::mat4 modelMatrix;
 
 private:
-	State();
-	~State();
+	State() {}
+	~State() {}
 };
