@@ -25,6 +25,9 @@
     <Filter Include="stb">
       <UniqueIdentifier>{25461b32-9a91-46dc-9a14-a3fc8577a02b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="pugixml">
+      <UniqueIdentifier>{8d122e4a-65f8-44bb-97d4-c630b5f9a17a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\lib\glfw\glfw3.h">
@@ -81,6 +84,12 @@
     <ClInclude Include="..\src\material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\pugixml\pugiconfig.hpp">
+      <Filter>pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\pugixml\pugixml.hpp">
+      <Filter>pugixml</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp">
@@ -124,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="..\src\material.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\pugixml\pugixml.cpp">
+      <Filter>pugixml</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

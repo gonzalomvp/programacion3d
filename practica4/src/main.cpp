@@ -124,16 +124,19 @@ int main() {
 	// Add top and bottom faces buffer to the cube mesh
 	cubeMesh->addBuffer(Buffer::create(vertices, indexes), Material::create(Texture::load("data/top.png")));
 
-	ModelPtr model = Model::create(cubeMesh);
+	MeshPtr townMesh = Mesh::load("data/asian_town.msh.xml");
+
+	ModelPtr model = Model::create(townMesh);
 	model->setPosition(glm::vec3());
-	model->setCallback(CubeData::update);
-	model->setUserData(std::make_shared<CubeData>(0.0f, 32.0f));
+	model->setScale(glm::vec3(100.0f));
+	//model->setCallback(CubeData::update);
+	//model->setUserData(std::make_shared<CubeData>(0.0f, 32.0f));
 	world->addEntity(model);
 
 	CameraPtr camera = Camera::create();
 	camera->setPosition(glm::vec3(0.0f, 1.0f, 3.0f));
-	camera->setEuler(glm::vec3(-20.0f, 0.0f, 0.0f));
-	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.0f));
+	camera->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
+	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.5f));
 	world->addEntity(camera);
 
 	// main loop
