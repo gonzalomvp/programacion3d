@@ -8,11 +8,11 @@ void Material::prepare() {
 	shader->setMatrix(shader->getLocation("MVP"), MVP);
 	shader->setInt(shader->getLocation("texSampler"), 0);
 
+	int useTexture = 0;
 	if (m_texture) {
 		m_texture->bind();
-		shader->setInt(shader->getLocation("useTexture"), 1);
+		useTexture = 1;
 	}
-	else {
-		shader->setInt(shader->getLocation("useTexture"), 0);
-	}
+
+	shader->setInt(shader->getLocation("useTexture"), useTexture);
 }
