@@ -8,6 +8,9 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
+#define CAMERA_MOVE_SPEED 5.0f
+#define CAMERA_ROT_SPEED  0.4f
+
 struct CubeData;
 typedef std::shared_ptr<CubeData> CubeDataPtr;
 
@@ -44,6 +47,7 @@ int main() {
 		return -1;
 	}
 	glfwMakeContextCurrent(win);
+	glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if ( !init() ) {
 		std::cout << "could not initialize opengl extensions" << std::endl;
@@ -135,9 +139,13 @@ int main() {
 
 	CameraPtr camera = Camera::create();
 	camera->setPosition(glm::vec3(0.0f, 1.0f, 3.0f));
-	camera->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
+	camera->setEuler(glm::vec3(0.0f, 0.0f, 0.5f));
 	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.5f));
 	world->addEntity(camera);
+
+	glm::dvec2 mouseCursor;
+	glfwGetCursorPos(win, &mouseCursor.x, &mouseCursor.y);
+	glm::dvec2 mouseCursorPrev;
 
 	// main loop
 	double lastTime = glfwGetTime();
@@ -150,9 +158,36 @@ int main() {
 		int screenWidth, screenHeight;
 		glfwGetWindowSize(win, &screenWidth, &screenHeight);
 
+		// Obtenemos la posicion del cursor
+		mouseCursorPrev = mouseCursor;
+		glfwGetCursorPos(win, &mouseCursor.x, &mouseCursor.y);
+		glm::dvec2 speedMouse =  mouseCursorPrev - mouseCursor;
+
 		// calculate projection matrix with the screen size in each tick
 		camera->setProjection(glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f));
 		camera->setViewport(glm::ivec4(0, 0, screenWidth, screenHeight));
+
+		glm::vec3 moveDirection;
+		if (glfwGetKey(win, GLFW_KEY_W)) {
+			moveDirection += glm::vec3(0.0f, 0.0f, -1.0f);
+		}
+		if (glfwGetKey(win, GLFW_KEY_S)) {
+			moveDirection += glm::vec3(0.0f, 0.0f, 1.0f);
+		}
+		if (glfwGetKey(win, GLFW_KEY_D)) {
+			moveDirection += glm::vec3(1.0f, 0.0f, 0.0f);
+		}
+		if (glfwGetKey(win, GLFW_KEY_A)) {
+			moveDirection += glm::vec3(-1.0f, 0.0f, 0.0f);
+		}
+		if(glm::length(moveDirection) != 0) {
+			moveDirection = glm::normalize(moveDirection) * CAMERA_MOVE_SPEED * deltaTime;
+			camera->move(moveDirection);
+		}
+
+		glm::vec3 cameraRotation = camera->getEuler() + glm::vec3(CAMERA_ROT_SPEED * static_cast<float>(speedMouse.y), CAMERA_ROT_SPEED * static_cast<float>(speedMouse.x), 0.0f);
+		cameraRotation = glm::vec3(glm::clamp(cameraRotation.x, -80.0f, 80.0f), cameraRotation.y, cameraRotation.z);
+		camera->setEuler(cameraRotation);
 
 		world->update(deltaTime);
 		world->draw();
