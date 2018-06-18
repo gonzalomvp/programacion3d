@@ -9,24 +9,45 @@
 #define SCREEN_HEIGHT 600
 
 #define CAMERA_MOVE_SPEED 5.0f
-#define CAMERA_ROT_SPEED  0.4f
+#define CAMERA_ROT_SPEED  0.2f
 
-struct CubeData;
-typedef std::shared_ptr<CubeData> CubeDataPtr;
+struct CameraData;
+typedef std::shared_ptr<CameraData> CameraDataPtr;
 
-struct CubeData {
-	float angle;
-	float rotationSpeed;
+struct CameraData {
+	GLFWwindow* win;
+	glm::dvec2 mouseCursorPrev;
 
-	CubeData(float initialAngle, float rotationSpeed) : angle(initialAngle), rotationSpeed(rotationSpeed) {}
+	CameraData(GLFWwindow* _win, glm::dvec2 _mouseCursor) : win(_win), mouseCursorPrev(_mouseCursor){}
 
 	static void update(Entity& entity, float deltaTime){
-		CubeDataPtr data = std::static_pointer_cast<CubeData>(entity.getUserData());
-		data->angle += data->rotationSpeed * deltaTime;
-		if (data->angle >= 360) {
-			data->angle -= 360;
+		CameraDataPtr data = std::static_pointer_cast<CameraData>(entity.getUserData());
+		glm::dvec2 mouseCursor;
+		glfwGetCursorPos(data->win, &mouseCursor.x, &mouseCursor.y);
+		glm::dvec2 speedMouse = data->mouseCursorPrev - mouseCursor;
+		data->mouseCursorPrev = mouseCursor;
+
+		glm::vec3 cameraRotation = entity.getEuler() + glm::vec3(CAMERA_ROT_SPEED * static_cast<float>(speedMouse.y), CAMERA_ROT_SPEED * static_cast<float>(speedMouse.x), 0.0f);
+		cameraRotation = glm::vec3(glm::clamp(cameraRotation.x, -80.0f, 80.0f), cameraRotation.y, cameraRotation.z);
+		entity.setEuler(cameraRotation);
+
+		glm::vec3 moveDirection;
+		if (glfwGetKey(data->win, GLFW_KEY_W)) {
+			moveDirection += glm::vec3(0.0f, 0.0f, -1.0f);
 		}
-		entity.setEuler(glm::vec3(0.0f, data->angle, 0.0f));
+		if (glfwGetKey(data->win, GLFW_KEY_S)) {
+			moveDirection += glm::vec3(0.0f, 0.0f, 1.0f);
+		}
+		if (glfwGetKey(data->win, GLFW_KEY_D)) {
+			moveDirection += glm::vec3(1.0f, 0.0f, 0.0f);
+		}
+		if (glfwGetKey(data->win, GLFW_KEY_A)) {
+			moveDirection += glm::vec3(-1.0f, 0.0f, 0.0f);
+		}
+		if (glm::length(moveDirection) != 0) {
+			moveDirection = glm::normalize(moveDirection) * CAMERA_MOVE_SPEED * deltaTime;
+			entity.move(moveDirection);
+		}
 	}
 };
 
@@ -58,94 +79,23 @@ int main() {
 	// Create World
 	WorldPtr world = World::create();
 
-	// Create Cube Mesh
-	MeshPtr cubeMesh = Mesh::create();
-
-	// define front faces vertices
-	std::vector<Vertex> vertices = {
-		Vertex( glm::vec3(-0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 0)),
-		Vertex( glm::vec3(-0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3(-0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 1)),
-
-		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 0)),
-		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3( 0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3( 0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3( 0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 1)),
-
-		Vertex( glm::vec3( 0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 0)),
-		Vertex( glm::vec3( 0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3( 0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 1)),
-
-		Vertex( glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 0)),
-		Vertex( glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3(-0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3(-0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3(-0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 1))
-	};
-
-	// define front faces vertices
-	std::vector<uint16_t> indexes;
-	for (uint16_t i = 0; i < 24; ++i) {
-		indexes.push_back(i);
-	}
-
-	// Add front faces buffer to the cube mesh
-	cubeMesh->addBuffer(Buffer::create(vertices, indexes), Material::create(Texture::load("data/front.png")));
-
-	// define top and bottom faces vertices
-	vertices.clear();
-	vertices = {
-		Vertex( glm::vec3(-0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 0)),
-		Vertex( glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3( 0.5f,  0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3( 0.5f,  0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 1)),
-
-		Vertex( glm::vec3(-0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(0, 0)),
-		Vertex( glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(0, 1)),
-		Vertex( glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(1), glm::vec2(1, 0)),
-		Vertex( glm::vec3( 0.5f, -0.5f, -0.5f),  glm::vec3(1), glm::vec2(1, 1)),
-	};
-
-	// define top and bottom faces vertices
-	indexes.clear();
-	for (uint16_t i = 0; i < 12; ++i) {
-		indexes.push_back(i);
-	}
-
-	// Add top and bottom faces buffer to the cube mesh
-	cubeMesh->addBuffer(Buffer::create(vertices, indexes), Material::create(Texture::load("data/top.png")));
-
+	// Load Mesh
 	MeshPtr townMesh = Mesh::load("data/asian_town.msh.xml");
 
+	// Create Model
 	ModelPtr model = Model::create(townMesh);
-	model->setPosition(glm::vec3());
 	model->setScale(glm::vec3(100.0f));
-	//model->setCallback(CubeData::update);
-	//model->setUserData(std::make_shared<CubeData>(0.0f, 32.0f));
 	world->addEntity(model);
 
+	// Create Camera
 	CameraPtr camera = Camera::create();
 	camera->setPosition(glm::vec3(0.0f, 1.0f, 3.0f));
-	camera->setEuler(glm::vec3(0.0f, 0.0f, 0.5f));
 	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.5f));
-	world->addEntity(camera);
-
+	camera->setCallback(CameraData::update);
 	glm::dvec2 mouseCursor;
 	glfwGetCursorPos(win, &mouseCursor.x, &mouseCursor.y);
-	glm::dvec2 mouseCursorPrev;
+	camera->setUserData(std::make_shared<CameraData>(win, mouseCursor));
+	world->addEntity(camera);
 
 	// main loop
 	double lastTime = glfwGetTime();
@@ -158,36 +108,9 @@ int main() {
 		int screenWidth, screenHeight;
 		glfwGetWindowSize(win, &screenWidth, &screenHeight);
 
-		// Obtenemos la posicion del cursor
-		mouseCursorPrev = mouseCursor;
-		glfwGetCursorPos(win, &mouseCursor.x, &mouseCursor.y);
-		glm::dvec2 speedMouse =  mouseCursorPrev - mouseCursor;
-
 		// calculate projection matrix with the screen size in each tick
 		camera->setProjection(glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f));
 		camera->setViewport(glm::ivec4(0, 0, screenWidth, screenHeight));
-
-		glm::vec3 moveDirection;
-		if (glfwGetKey(win, GLFW_KEY_W)) {
-			moveDirection += glm::vec3(0.0f, 0.0f, -1.0f);
-		}
-		if (glfwGetKey(win, GLFW_KEY_S)) {
-			moveDirection += glm::vec3(0.0f, 0.0f, 1.0f);
-		}
-		if (glfwGetKey(win, GLFW_KEY_D)) {
-			moveDirection += glm::vec3(1.0f, 0.0f, 0.0f);
-		}
-		if (glfwGetKey(win, GLFW_KEY_A)) {
-			moveDirection += glm::vec3(-1.0f, 0.0f, 0.0f);
-		}
-		if(glm::length(moveDirection) != 0) {
-			moveDirection = glm::normalize(moveDirection) * CAMERA_MOVE_SPEED * deltaTime;
-			camera->move(moveDirection);
-		}
-
-		glm::vec3 cameraRotation = camera->getEuler() + glm::vec3(CAMERA_ROT_SPEED * static_cast<float>(speedMouse.y), CAMERA_ROT_SPEED * static_cast<float>(speedMouse.x), 0.0f);
-		cameraRotation = glm::vec3(glm::clamp(cameraRotation.x, -80.0f, 80.0f), cameraRotation.y, cameraRotation.z);
-		camera->setEuler(cameraRotation);
 
 		world->update(deltaTime);
 		world->draw();
