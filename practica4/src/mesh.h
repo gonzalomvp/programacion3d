@@ -15,9 +15,9 @@ public:
 	void                addBuffer    (const BufferPtr& buffer, const ShaderPtr& shader = nullptr);
 	void                addBuffer    (const BufferPtr& buffer, const MaterialPtr& material);
 					    
-	size_t              getNumBuffers()             const { return m_buffers.size(); }
-	const BufferPtr&    getBuffer    (size_t index) const { return m_buffers[index].first ;}
-	BufferPtr&          getBuffer    (size_t index)       { return m_buffers[index].first ;}
+	size_t              getNumBuffers()             const { return m_buffers.size();        }
+	const BufferPtr&    getBuffer    (size_t index) const { return m_buffers[index].first ; }
+	BufferPtr&          getBuffer    (size_t index)       { return m_buffers[index].first ; }
 	const MaterialPtr&  getMaterial  (size_t index) const { return m_buffers[index].second; }
 	MaterialPtr&        getMaterial  (size_t index)       { return m_buffers[index].second; }
 	void                draw         ();
