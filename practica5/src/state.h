@@ -2,8 +2,7 @@
 
 #include "common.h"
 #include "shader.h"
-
-class LightPtr;
+#include "light.h"
 
 class State {
 public:

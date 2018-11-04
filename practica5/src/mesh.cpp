@@ -4,6 +4,8 @@
 #include "state.h"
 #include "utils.h"
 
+//Comprobar que vienen los datos!!!!!!!!!!!!!!!
+
 MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(filename);
@@ -25,12 +27,14 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			std::vector<float> coords = splitString<float>(coordsStr, ',');
 			std::string texcoordsStr = bufferNode.child("texcoords").text().as_string();
 			std::vector<float> texcoords = splitString<float>(texcoordsStr, ',');
+			std::string normalsStr = bufferNode.child("normals").text().as_string();
+			std::vector<float> normals = splitString<float>(normalsStr, ',');
 			std::vector<Vertex> vertices;
 			size_t vericesSize = coords.size() / 3;
 			for (size_t i = 0; i < vericesSize; ++i) {
 				glm::vec3 pos(glm::vec3(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2]));
 				glm::vec2 tex(0);
-				glm::vec3 normal(0);
+				glm::vec3 normal(glm::vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]));
 
 				if (texcoordsStr != "") {
 					tex = glm::vec2(texcoords[i * 2], texcoords[i * 2 + 1]);

@@ -15,4 +15,8 @@ void Material::prepare() {
 	}
 
 	shader->setInt(shader->getLocation("useTexture"), useTexture);
+
+	for (size_t i = 0; i < State::lights.size(); ++i) {
+		State::lights[i]->prepare(static_cast<int>(i), shader);
+	}
 }

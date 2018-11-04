@@ -1,9 +1,8 @@
 #pragma once
-
 #include "entity.h"
+#include "shader.h"
 
 class Light;
-class ShaderPtr;
 typedef std::shared_ptr<Light> LightPtr;
 
 class Light : public Entity {

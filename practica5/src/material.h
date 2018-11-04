@@ -3,6 +3,7 @@
 #include "texture.h"
 #include "shader.h"
 #include "state.h"
+#include "light.h"
 
 class Material;
 
