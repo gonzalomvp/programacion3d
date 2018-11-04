@@ -145,6 +145,7 @@
     <ClInclude Include="..\src\camera.h" />
     <ClInclude Include="..\src\common.h" />
     <ClInclude Include="..\src\entity.h" />
+    <ClInclude Include="..\src\light.h" />
     <ClInclude Include="..\src\material.h" />
     <ClInclude Include="..\src\mesh.h" />
     <ClInclude Include="..\src\model.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="..\src\buffer.cpp" />
     <ClCompile Include="..\src\camera.cpp" />
     <ClCompile Include="..\src\entity.cpp" />
+    <ClCompile Include="..\src\light.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\material.cpp" />
     <ClCompile Include="..\src\mesh.cpp" />

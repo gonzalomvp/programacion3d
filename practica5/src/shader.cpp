@@ -54,9 +54,10 @@ Shader::Shader(const std::string& vertexShaderSource, const std::string& fragmen
 		m_Id = 0;
 		return;
 	}
-	m_vposLoc   = glGetAttribLocation(m_Id, "vpos");
-	m_vcolorLoc = glGetAttribLocation(m_Id, "vcolor");
-	m_vtexLoc   = glGetAttribLocation(m_Id, "vtex");
+	m_vposLoc    = glGetAttribLocation(m_Id, "vpos");
+	m_vcolorLoc  = glGetAttribLocation(m_Id, "vcolor");
+	m_vtexLoc    = glGetAttribLocation(m_Id, "vtex");
+	m_vnormalLoc = glGetAttribLocation(m_Id, "vnormal");
 }
 
 Shader::~Shader() {
@@ -83,6 +84,11 @@ void Shader::setupAttribs() const {
 	if (m_vtexLoc != -1) {
 		glEnableVertexAttribArray(m_vtexLoc);
 		glVertexAttribPointer(m_vtexLoc, 2, GL_FLOAT, false, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, tex)));
+	}
+
+	if (m_vnormalLoc != -1) {
+		glEnableVertexAttribArray(m_vnormalLoc);
+		glVertexAttribPointer(m_vnormalLoc, 3, GL_FLOAT, false, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, normal)));
 	}
 }
 

@@ -43,4 +43,5 @@ private:
 	int      m_vposLoc;
 	int      m_vcolorLoc;
 	int      m_vtexLoc;
+	int      m_vnormalLoc;
 };

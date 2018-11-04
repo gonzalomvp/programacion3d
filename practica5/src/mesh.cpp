@@ -14,6 +14,9 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 		pugi::xml_node buffersNode = meshNode.child("buffers");
 		for (pugi::xml_node bufferNode = buffersNode.child("buffer"); bufferNode; bufferNode = bufferNode.next_sibling("buffer")) {
 			pugi::xml_node materialNode = bufferNode.child("material");
+			std::string colorStr = materialNode.child("color").text().as_string();
+			std::vector<float> colorValues = splitString<float>(colorStr, ',');
+			glm::vec3 color(colorValues[0], colorValues[1], colorValues[2]);
 			std::string textureStr = materialNode.child("texture").text().as_string();
 			std::string textureFile = extractPath(std::string(filename)) + textureStr;
 			std::string indexesStr = bufferNode.child("indices").text().as_string();
@@ -25,7 +28,15 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			std::vector<Vertex> vertices;
 			size_t vericesSize = coords.size() / 3;
 			for (size_t i = 0; i < vericesSize; ++i) {
-				Vertex vertex(glm::vec3(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2]), glm::vec3(1), glm::vec2(texcoords[i * 2], texcoords[i * 2 + 1]));
+				glm::vec3 pos(glm::vec3(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2]));
+				glm::vec2 tex(0);
+				glm::vec3 normal(0);
+
+				if (texcoordsStr != "") {
+					tex = glm::vec2(texcoords[i * 2], texcoords[i * 2 + 1]);
+				}
+
+				Vertex vertex(pos, color, tex, normal);
 				vertices.push_back(vertex);
 			}
 			mesh->addBuffer(Buffer::create(vertices, indexes), Material::create(Texture::load(textureFile.c_str()), nullptr));
