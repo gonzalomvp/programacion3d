@@ -81,13 +81,17 @@ int main() {
 
 	// Load Mesh
 	MeshPtr bunnyMesh = Mesh::load("data/bunny.msh.xml");
-	//MeshPtr townMesh = Mesh::load("data/asian_town.msh.xml");
+	MeshPtr townMesh = Mesh::load("data/scene.msh.xml");
 
 	// Create Model
 	ModelPtr model = Model::create(bunnyMesh);
 	model->setScale(glm::vec3(10.0f));
-	model->setEuler(glm::vec3(90.0f, 0.0f, 0.0f));
+	model->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
 	world->addEntity(model);
+
+	ModelPtr model2 = Model::create(townMesh);
+	model2->setPosition(glm::vec3(1,-3,0));
+	world->addEntity(model2);
 
 	// Create Camera
 	CameraPtr camera = Camera::create();
