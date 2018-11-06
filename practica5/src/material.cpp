@@ -26,11 +26,11 @@ void Material::prepare() {
 	//Lights
 
 	shader->setInt(shader->getLocation("numLights"), State::lights.size());
-	glm::vec4 lightVectorTemp(1.0f, 1.0f, -1.0f, 0.0f);
-	lightVectorTemp = ModelView * lightVectorTemp;
+	glm::vec4 lightVectorTemp(1.0f, 1.0f, 1.0f, 0.0f);
+	lightVectorTemp = State::viewMatrix * lightVectorTemp;
 	shader->setVec4(shader->getLocation("L[0]"), lightVectorTemp);
-	lightVectorTemp = glm::vec4(0.0f, 0.0f, -5.0f, 1.0f);
-	lightVectorTemp = ModelView * lightVectorTemp;
+	lightVectorTemp = glm::vec4(0.0f, 0.0f, 5.0f, 1.0f);
+	lightVectorTemp = State::viewMatrix * lightVectorTemp;
 	shader->setVec4(shader->getLocation("L[1]"), lightVectorTemp);
 
 
