@@ -2,6 +2,7 @@
 
 #include "entity.h"
 #include "camera.h"
+#include "light.h"
 
 class World;
 typedef std::shared_ptr<World> WorldPtr;
@@ -24,4 +25,5 @@ private:
 
 	std::vector<EntityPtr> m_entities;
 	std::vector<CameraPtr> m_cameras;
+	std::vector<LightPtr>  m_lights;
 };

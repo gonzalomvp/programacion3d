@@ -100,6 +100,20 @@ int main() {
 	camera->setUserData(std::make_shared<CameraData>(win, mouseCursor));
 	world->addEntity(camera);
 
+	// Create lights
+	LightPtr directionalLight = Light::create();
+	directionalLight->setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
+	directionalLight->setType(Light::DIRECTIONAL);
+	directionalLight->setColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	world->addEntity(directionalLight);
+
+	LightPtr pointLight = Light::create();
+	pointLight->setPosition(glm::vec3(0.0f, 0.0f, 5.0f));
+	pointLight->setType(Light::POINT);
+	pointLight->setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	pointLight->setLinearAttenuation(0.2f);
+	world->addEntity(pointLight);
+
 	// main loop
 	double lastTime = glfwGetTime();
 	while ( !glfwWindowShouldClose(win) && !glfwGetKey(win, GLFW_KEY_ESCAPE) ) {
