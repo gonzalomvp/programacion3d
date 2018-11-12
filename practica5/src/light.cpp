@@ -14,6 +14,8 @@ void Light::prepare(int index, ShaderPtr& shader) const {
 	default:
 		break;
 	}
+
+	lightVector = State::viewMatrix * lightVector;
 	std::string indexStr = "[" + std::to_string(index) + "]";
 	shader->setVec4(shader->getLocation((std::string("lightVectors") + indexStr).c_str()), lightVector);
 	shader->setVec4(shader->getLocation((std::string("lightColors") + indexStr).c_str()), glm::vec4(m_color, 1.0f));
