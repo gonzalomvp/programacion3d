@@ -16,6 +16,8 @@ public:
 	size_t           getNumEntities() const             { return m_entities.size(); }
 	const EntityPtr& getEntity     (size_t index) const { return m_entities[index]; }
 	EntityPtr&       getEntity     (size_t index)       { return m_entities[index]; }
+	const glm::vec3& getAmbient    () const;
+	void			 setAmbient    (const glm::vec3& ambient);
 	void             update        (float deltaTime);
 	void             draw          ();
 

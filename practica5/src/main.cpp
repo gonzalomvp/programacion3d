@@ -101,6 +101,8 @@ int main() {
 	world->addEntity(camera);
 
 	// Create lights
+	world->setAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
+
 	LightPtr directionalLight = Light::create();
 	directionalLight->setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
 	directionalLight->setType(Light::DIRECTIONAL);

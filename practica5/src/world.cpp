@@ -39,6 +39,14 @@ void World::removeEntity(const EntityPtr& entity) {
 	}
 }
 
+const glm::vec3& World::getAmbient() const {
+	return State::ambient;
+}
+
+void World::setAmbient(const glm::vec3& ambient) {
+	State::ambient = ambient;
+}
+
 void World::update(float deltaTime) {
 	for (size_t i = 0; i < m_entities.size(); ++i) {
 		m_entities[i]->update(deltaTime);

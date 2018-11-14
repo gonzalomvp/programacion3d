@@ -18,6 +18,6 @@ void Light::prepare(int index, ShaderPtr& shader) const {
 	lightVector = State::viewMatrix * lightVector;
 	std::string indexStr = "[" + std::to_string(index) + "]";
 	shader->setVec4(shader->getLocation((std::string("lightVectors") + indexStr).c_str()), lightVector);
-	shader->setVec4(shader->getLocation((std::string("lightColors") + indexStr).c_str()), glm::vec4(m_color, 1.0f));
+	shader->setVec3(shader->getLocation((std::string("lightColors") + indexStr).c_str()), m_color);
 	shader->setFloat(shader->getLocation((std::string("lightAttenuations") + indexStr).c_str()), m_linearAttenuation);
 }

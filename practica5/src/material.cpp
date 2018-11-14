@@ -24,8 +24,8 @@ void Material::prepare() {
 	shader->setInt(shader->getLocation("useTexture"), useTexture);
 
 	//Lights
-
-	shader->setInt(shader->getLocation("numLights"), State::lights.size());
+	shader->setVec3(shader->getLocation("ambientLightColor"), State::ambient);
+	shader->setInt(shader->getLocation("numLights"), static_cast<int>(State::lights.size()));
 	//glm::vec4 lightVectorTemp(1.0f, 1.0f, 1.0f, 0.0f);
 	//lightVectorTemp = State::viewMatrix * lightVectorTemp;
 	//shader->setVec4(shader->getLocation("L[0]"), lightVectorTemp);

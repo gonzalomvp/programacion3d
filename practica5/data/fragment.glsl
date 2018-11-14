@@ -1,20 +1,23 @@
 uniform sampler2D texSampler;
 uniform bool useTexture;
 uniform int numLights;
-uniform vec4[7] L;
 varying vec3 fcolor;
 varying vec2 ftex;
 varying vec4 N;
 varying vec4 fpos;
 
-uniform vec4[9] lightVectors;
-uniform vec4[9] lightColors;
-uniform float[9] lightAttenuations;
+uniform vec3 ambientLightColor;
+uniform vec4[8] lightVectors;
+uniform vec3[8] lightColors;
+uniform float[8] lightAttenuations;
 
 void main() {
-	vec4 ambient = vec4(0.2f, 0.2f, 0.2f, 1.0f);
-	vec4 diffuse = vec4(0.0f);
-	vec4 specular = vec4(0.0f);
+	vec3 diffuse = vec3(0.0f);
+	vec3 specular = vec3(0.0f);
+	if (numLights > 0) {
+		diffuse = ambientLightColor;
+	}
+	
 	vec3 N2 = vec3(N.x, N.y, N.z);
 	N2 = normalize(N2);
 
@@ -41,6 +44,6 @@ void main() {
 	}
 	else {
 		
-		gl_FragColor = (ambient + diffuse) * vec4(fcolor, 1) + specular;
+		gl_FragColor = vec4(diffuse * fcolor + specular, 1);
 	}
 }

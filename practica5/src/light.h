@@ -24,7 +24,7 @@ public:
 	void			 prepare(int index, ShaderPtr& shader) const;
 
 private:
-	Light(): m_type(DIRECTIONAL), m_color(), m_linearAttenuation(1.0f) {}
+	Light(): m_type(DIRECTIONAL), m_color(1.0f), m_linearAttenuation(1.0f) {}
 	~Light() {}
 
 	Type      m_type;
