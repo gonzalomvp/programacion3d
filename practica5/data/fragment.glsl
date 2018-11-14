@@ -44,10 +44,14 @@ void main() {
 	}
 
 	if (useTexture) {
-		gl_FragColor = texture2D(texSampler, ftex) * vec4(color, 1);
+		color = texture2D(texSampler, ftex) * color;
 	}
-	else {
-		
+	if (numLights > 0) {
 		gl_FragColor = vec4(diffuse * color + specular, 1);
 	}
+	else {
+		gl_FragColor = vec4(color, 1);
+	}
+	
+	
 }
