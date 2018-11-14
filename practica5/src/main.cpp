@@ -18,9 +18,9 @@ struct CameraData {
 	GLFWwindow* win;
 	glm::dvec2 mouseCursorPrev;
 
-	CameraData(GLFWwindow* _win, glm::dvec2 _mouseCursor) : win(_win), mouseCursorPrev(_mouseCursor){}
+	CameraData(GLFWwindow* _win, glm::dvec2 _mouseCursor) : win(_win), mouseCursorPrev(_mouseCursor) {}
 
-	static void update(Entity& entity, float deltaTime){
+	static void update(Entity& entity, float deltaTime) {
 		CameraDataPtr data = std::static_pointer_cast<CameraData>(entity.getUserData());
 		glm::dvec2 mouseCursor;
 		glfwGetCursorPos(data->win, &mouseCursor.x, &mouseCursor.y);
@@ -50,6 +50,14 @@ struct CameraData {
 		}
 	}
 };
+
+void moveLight(Entity& entity, float deltaTime) {
+	glm::vec2 currentPos(entity.getPosition().x, entity.getPosition().z);
+	float angle = glm::degrees(atan2(currentPos.y, currentPos.x));
+	angle += 10.0f * deltaTime;
+	glm::vec2 newPos = glm::vec2(cosf(glm::radians(angle)), sinf(glm::radians(angle))) * 5.0f;
+	entity.setPosition(glm::vec3(newPos.x, 0.0f, newPos.y));
+}
 
 int main() {
 	// init glfw
@@ -111,10 +119,11 @@ int main() {
 	world->addEntity(directionalLight);
 
 	LightPtr pointLight = Light::create();
-	pointLight->setPosition(glm::vec3(0.0f, 0.0f, 5.0f));
+	pointLight->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
 	pointLight->setType(Light::POINT);
 	pointLight->setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 	pointLight->setLinearAttenuation(0.2f);
+	pointLight->setCallback(moveLight);
 	world->addEntity(pointLight);
 
 	// main loop
