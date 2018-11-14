@@ -22,6 +22,8 @@ void Material::prepare() {
 	}
 
 	shader->setInt(shader->getLocation("useTexture"), useTexture);
+	shader->setVec3(shader->getLocation("color"), glm::vec3(m_color.r, m_color.g, m_color.b));
+	shader->setInt(shader->getLocation("shininess"), m_shininess);
 
 	//Lights
 	shader->setVec3(shader->getLocation("ambientLightColor"), State::ambient);

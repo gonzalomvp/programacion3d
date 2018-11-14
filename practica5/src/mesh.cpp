@@ -18,7 +18,8 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			pugi::xml_node materialNode = bufferNode.child("material");
 			std::string colorStr = materialNode.child("color").text().as_string();
 			std::vector<float> colorValues = splitString<float>(colorStr, ',');
-			glm::vec3 color(colorValues[0], colorValues[1], colorValues[2]);
+			glm::vec4 color(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
+			uint8_t shininess = materialNode.child("shininess").text().as_uint();
 			std::string textureStr = materialNode.child("texture").text().as_string();
 			std::string textureFile = extractPath(std::string(filename)) + textureStr;
 			std::string indexesStr = bufferNode.child("indices").text().as_string();
@@ -40,10 +41,10 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 					tex = glm::vec2(texcoords[i * 2], texcoords[i * 2 + 1]);
 				}
 
-				Vertex vertex(pos, color, tex, normal);
+				Vertex vertex(pos, tex, normal);
 				vertices.push_back(vertex);
 			}
-			mesh->addBuffer(Buffer::create(vertices, indexes), Material::create(Texture::load(textureFile.c_str()), nullptr));
+			mesh->addBuffer(Buffer::create(vertices, indexes), Material::create(Texture::load(textureFile.c_str()), nullptr, color, shininess));
 		}
 		return mesh;
 	}
