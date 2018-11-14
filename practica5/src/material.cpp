@@ -25,17 +25,9 @@ void Material::prepare() {
 	shader->setVec3(shader->getLocation("color"), glm::vec3(m_color.r, m_color.g, m_color.b));
 	shader->setInt(shader->getLocation("shininess"), m_shininess);
 
-	//Lights
-	shader->setVec3(shader->getLocation("ambientLightColor"), State::ambient);
+	// Prepare Lights
+	shader->setVec3(shader->getLocation("ambient"), State::ambient);
 	shader->setInt(shader->getLocation("numLights"), static_cast<int>(State::lights.size()));
-	//glm::vec4 lightVectorTemp(1.0f, 1.0f, 1.0f, 0.0f);
-	//lightVectorTemp = State::viewMatrix * lightVectorTemp;
-	//shader->setVec4(shader->getLocation("L[0]"), lightVectorTemp);
-	//lightVectorTemp = glm::vec4(0.0f, 0.0f, 5.0f, 1.0f);
-	//lightVectorTemp = State::viewMatrix * lightVectorTemp;
-	//shader->setVec4(shader->getLocation("L[1]"), lightVectorTemp);
-
-
 	for (size_t i = 0; i < State::lights.size(); ++i) {
 		State::lights[i]->prepare(static_cast<int>(i), shader);
 	}

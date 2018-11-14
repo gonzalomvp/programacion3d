@@ -100,9 +100,10 @@ int main() {
 	camera->setUserData(std::make_shared<CameraData>(win, mouseCursor));
 	world->addEntity(camera);
 
-	// Create lights
+	// Set ambient color
 	world->setAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
 
+	// Create lights
 	LightPtr directionalLight = Light::create();
 	directionalLight->setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
 	directionalLight->setType(Light::DIRECTIONAL);

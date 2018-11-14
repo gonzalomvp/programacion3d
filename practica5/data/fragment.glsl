@@ -3,7 +3,7 @@ uniform bool useTexture;
 uniform vec3 color;
 uniform int shininess;
 uniform int numLights;
-uniform vec3 ambientLightColor;
+uniform vec3 ambient;
 uniform vec4[8] lightVectors;
 uniform vec3[8] lightColors;
 uniform float[8] lightAttenuations;
@@ -16,7 +16,7 @@ void main() {
 	vec3 diffuse = vec3(0.0f);
 	vec3 specular = vec3(0.0f);
 	if (numLights > 0) {
-		diffuse = ambientLightColor;
+		diffuse = ambient;
 	}
 	
 	vec3 N = vec3(fN.x, fN.y, fN.z);

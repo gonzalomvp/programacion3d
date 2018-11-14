@@ -39,14 +39,6 @@ void World::removeEntity(const EntityPtr& entity) {
 	}
 }
 
-const glm::vec3& World::getAmbient() const {
-	return State::ambient;
-}
-
-void World::setAmbient(const glm::vec3& ambient) {
-	State::ambient = ambient;
-}
-
 void World::update(float deltaTime) {
 	for (size_t i = 0; i < m_entities.size(); ++i) {
 		m_entities[i]->update(deltaTime);
@@ -54,10 +46,12 @@ void World::update(float deltaTime) {
 }
 
 void World::draw() {
+	State::ambient = m_ambient;
 	State::lights.clear();
 	for (size_t i = 0; i < m_lights.size(); ++i) {
 		State::lights.push_back(m_lights[i]);
 	}
+
 	for (size_t i = 0; i < m_cameras.size(); ++i) {
 		m_cameras[i]->prepare();
 		for (size_t j = 0; j < m_entities.size(); ++j) {
