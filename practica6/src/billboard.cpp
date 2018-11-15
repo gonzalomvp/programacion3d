@@ -1,6 +1,5 @@
 #include "billboard.h"
 
-
 Billboard::Billboard(const MaterialPtr& mat) : m_material(mat), m_size(1.0f), m_spin(0.0f) {
 	std::vector<Vertex> vertices;
 	vertices.push_back(Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
@@ -22,6 +21,7 @@ void Billboard::draw() {
                                       glm::vec4(m_position.x, m_position.y, m_position.z, 1.0f));
 
 	//modelMatrix = glm::scale(modelMatrix, glm::vec3(m_size.x, m_size.y, 1.0f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(m_spin) , glm::vec3(0.0f, 0.0f, 1.0f));
 	State::modelMatrix = modelMatrix;
 	m_material->prepare();
 	m_buffer->draw(*(m_material->getShader()));

@@ -104,9 +104,10 @@ int main() {
 	world->addEntity(model);
 
 	// Create Billboard
-	BillboardPtr billboard = Billboard::create(Material::create(Texture::load("data/front.png"), nullptr));
-	billboard->setPosition(glm::vec3(0.0f, 1.0f, 0.0f));
-	world->addEntity(billboard);
+	ParticlePtr particle = Particle::create(Material::create(Texture::load("data/front.png"), nullptr), glm::vec3(0.1), 10, -1, false);
+	particle->setPosition(glm::vec3(0.0f, 1.0f, 0.0f));
+	particle->setSpin(0.0f);
+	world->addEntity(particle);
 
 	// Create Camera
 	CameraPtr camera = Camera::create();

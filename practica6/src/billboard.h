@@ -20,7 +20,7 @@ public:
 
 	virtual void draw() override;
 
-private:
+protected:
 	Billboard(const MaterialPtr& mat);
 	~Billboard() {}
 

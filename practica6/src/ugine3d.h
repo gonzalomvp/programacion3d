@@ -8,6 +8,7 @@
 #include "light.h"
 #include "mesh.h"
 #include "model.h"
+#include "particle.h"
 #include "shader.h"
 #include "state.h"
 #include "texture.h"
