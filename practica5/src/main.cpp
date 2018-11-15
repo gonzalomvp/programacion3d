@@ -52,11 +52,16 @@ struct CameraData {
 };
 
 void moveLight(Entity& entity, float deltaTime) {
+	EntityPtr model = std::static_pointer_cast<Entity>(entity.getUserData());
+	glm::vec2 modelPos(model->getPosition().x, model->getPosition().z);
 	glm::vec2 currentPos(entity.getPosition().x, entity.getPosition().z);
-	float angle = glm::degrees(atan2(currentPos.y, currentPos.x));
-	angle += 10.0f * deltaTime;
+	float angle = glm::degrees(atan2(currentPos.y - modelPos.y, currentPos.x - modelPos.x));
+
+	//printf("angle: %f\n", angle);
+	//printf("dist: %f\n", glm::length(model->getPosition() - entity.getPosition()));
+	angle += 20.0f * deltaTime;
 	glm::vec2 newPos = glm::vec2(cosf(glm::radians(angle)), sinf(glm::radians(angle))) * 5.0f;
-	entity.setPosition(glm::vec3(newPos.x, 0.0f, newPos.y));
+	entity.setPosition(model->getPosition() + glm::vec3(newPos.x, 0.0f, newPos.y));
 }
 
 int main() {
@@ -95,6 +100,7 @@ int main() {
 	ModelPtr model = Model::create(bunnyMesh);
 	model->setScale(glm::vec3(10.0f));
 	model->setEuler(glm::vec3(90.0f, 0.0f, 0.0f));
+	//model->setPosition(glm::vec3(20.0f, 30.0f, -10.0f));
 	world->addEntity(model);
 
 	// Create Camera
@@ -115,15 +121,16 @@ int main() {
 	LightPtr directionalLight = Light::create();
 	directionalLight->setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
 	directionalLight->setType(Light::DIRECTIONAL);
-	directionalLight->setColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	directionalLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
 	world->addEntity(directionalLight);
 
 	LightPtr pointLight = Light::create();
-	pointLight->setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
+	pointLight->setPosition(model->getPosition() + glm::vec3(5.0f, 0.0f, 0.0f));
 	pointLight->setType(Light::POINT);
-	pointLight->setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	pointLight->setColor(glm::vec3(1.0f, 0.0f, 0.0f));
 	pointLight->setLinearAttenuation(0.2f);
 	pointLight->setCallback(moveLight);
+	pointLight->setUserData(model);
 	world->addEntity(pointLight);
 
 	// main loop
