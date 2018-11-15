@@ -13,5 +13,6 @@ void Camera::prepare() {
 	glViewport(m_viewport[0], m_viewport[1], m_viewport[2], m_viewport[3]);
 	glScissor(m_viewport[0], m_viewport[1], m_viewport[2], m_viewport[3]);
 	glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, 1.0f);
+	glDepthMask(GL_TRUE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

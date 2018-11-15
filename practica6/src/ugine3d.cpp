@@ -10,6 +10,7 @@ bool init() {
 	if (glewInit() == GLEW_OK) {
 		glEnable(GL_SCISSOR_TEST);
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
 
 		// create default shader
 		ShaderPtr shader = Shader::create(readString("data/vertex.glsl"), readString("data/fragment.glsl"));

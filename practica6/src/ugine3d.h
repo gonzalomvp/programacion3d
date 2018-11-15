@@ -1,9 +1,11 @@
 #pragma once
 
+#include "billboard.h"
 #include "buffer.h"
 #include "camera.h"
 #include "common.h"
 #include "entity.h"
+#include "light.h"
 #include "mesh.h"
 #include "model.h"
 #include "shader.h"

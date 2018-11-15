@@ -93,20 +93,25 @@ int main() {
 	WorldPtr world = World::create();
 
 	// Load Mesh
-	MeshPtr bunnyMesh = Mesh::load("data/bunny.msh.xml");
+	MeshPtr bunnyMesh = Mesh::load("data/asian_town.msh.xml");
 	//MeshPtr townMesh = Mesh::load("data/asian_town.msh.xml");
 
 	// Create Model
 	ModelPtr model = Model::create(bunnyMesh);
-	model->setScale(glm::vec3(10.0f));
-	model->setEuler(glm::vec3(90.0f, 0.0f, 0.0f));
+	model->setScale(glm::vec3(100.0f));
+	model->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
 	//model->setPosition(glm::vec3(20.0f, 30.0f, -10.0f));
 	world->addEntity(model);
 
+	// Create Billboard
+	BillboardPtr billboard = Billboard::create(Material::create(Texture::load("data/front.png"), nullptr));
+	billboard->setPosition(glm::vec3(0.0f, 1.0f, 0.0f));
+	world->addEntity(billboard);
+
 	// Create Camera
 	CameraPtr camera = Camera::create();
-	camera->setPosition(glm::vec3(0.0f, 2.0f, 3.0f));
-	camera->setEuler(glm::vec3(-20.0f, 5.0f, 0.0f));
+	camera->setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
+	//camera->setEuler(glm::vec3(-20.0f, 5.0f, 0.0f));
 	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.0f));
 	camera->setCallback(CameraData::update);
 	glm::dvec2 mouseCursor;
@@ -123,7 +128,7 @@ int main() {
 		directionalLight->setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
 		directionalLight->setType(Light::DIRECTIONAL);
 		directionalLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
-		world->addEntity(directionalLight);
+		//world->addEntity(directionalLight);
 	}
 
 	LightPtr pointLight = Light::create();
@@ -134,7 +139,7 @@ int main() {
 		pointLight->setLinearAttenuation(0.2f);
 		pointLight->setCallback(moveLight);
 		pointLight->setUserData(model);
-		world->addEntity(pointLight);
+		//world->addEntity(pointLight);
 	}
 
 	// main loop

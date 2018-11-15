@@ -25,6 +25,32 @@ void Material::prepare() {
 	shader->setVec3(shader->getLocation("color"), glm::vec3(m_color.r, m_color.g, m_color.b));
 	shader->setInt(shader->getLocation("shininess"), m_shininess);
 
+	switch (m_blendMode) {
+		case Material::ALPHA:
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			break;
+		case Material::ADD:
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			break;
+		case Material::MUL:
+			glBlendFunc(GL_DST_COLOR, GL_ZERO);
+			break;
+	}
+
+	if (m_culling) {
+		glEnable(GL_CULL_FACE);
+	}
+	else {
+		glDisable(GL_CULL_FACE);
+	}
+
+	if (m_depthWrite) {
+		glDepthMask(GL_TRUE);
+	}
+	else {
+		glDepthMask(GL_FALSE);
+	}
+
 	// Prepare Lights
 	shader->setVec3(shader->getLocation("ambient"), State::ambient);
 	shader->setInt(shader->getLocation("numLights"), static_cast<int>(State::lights.size()));

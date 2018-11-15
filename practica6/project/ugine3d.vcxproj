@@ -141,6 +141,7 @@
     <ClInclude Include="..\lib\pugixml\pugiconfig.hpp" />
     <ClInclude Include="..\lib\pugixml\pugixml.hpp" />
     <ClInclude Include="..\lib\stb\stb_image.h" />
+    <ClInclude Include="..\src\billboard.h" />
     <ClInclude Include="..\src\buffer.h" />
     <ClInclude Include="..\src\camera.h" />
     <ClInclude Include="..\src\common.h" />
@@ -160,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="..\lib\glew\glew.c" />
     <ClCompile Include="..\lib\pugixml\pugixml.cpp" />
+    <ClCompile Include="..\src\billboard.cpp" />
     <ClCompile Include="..\src\buffer.cpp" />
     <ClCompile Include="..\src\camera.cpp" />
     <ClCompile Include="..\src\entity.cpp" />
