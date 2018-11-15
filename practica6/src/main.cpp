@@ -93,25 +93,25 @@ int main() {
 	WorldPtr world = World::create();
 
 	// Load Mesh
-	MeshPtr bunnyMesh = Mesh::load("data/asian_town.msh.xml");
+	MeshPtr columnMesh = Mesh::load("data/column.msh.xml");
 	//MeshPtr townMesh = Mesh::load("data/asian_town.msh.xml");
 
 	// Create Model
-	ModelPtr model = Model::create(bunnyMesh);
-	model->setScale(glm::vec3(100.0f));
+	ModelPtr model = Model::create(columnMesh);
+	model->setScale(glm::vec3(0.01f));
 	model->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
 	//model->setPosition(glm::vec3(20.0f, 30.0f, -10.0f));
 	world->addEntity(model);
 
 	// Create Billboard
-	ParticlePtr particle = Particle::create(Material::create(Texture::load("data/front.png"), nullptr), glm::vec3(0.1), 10, -1, false);
-	particle->setPosition(glm::vec3(0.0f, 1.0f, 0.0f));
+	ParticlePtr particle = Particle::create(Material::create(Texture::load("data/front.png"), nullptr), glm::vec3(0.1f), 10, -1, false);
+	particle->setPosition(glm::vec3(0.0f, 7.0f, 0.0f));
 	particle->setSpin(0.0f);
 	world->addEntity(particle);
 
 	// Create Camera
 	CameraPtr camera = Camera::create();
-	camera->setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
+	camera->setPosition(glm::vec3(0.0f, 3.0f, 15.0f));
 	//camera->setEuler(glm::vec3(-20.0f, 5.0f, 0.0f));
 	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.0f));
 	camera->setCallback(CameraData::update);
