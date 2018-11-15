@@ -29,6 +29,5 @@ private:
 
 	std::vector<EntityPtr> m_entities;
 	std::vector<CameraPtr> m_cameras;
-	std::vector<LightPtr>  m_lights;
 	glm::vec3              m_ambient;
 };

@@ -11,7 +11,7 @@ void World::addEntity(const EntityPtr& entity) {
 	else {
 		LightPtr light = std::dynamic_pointer_cast<Light>(entity);
 		if (light) {
-			m_lights.push_back(light);
+			State::lights.push_back(light);
 		}
 	}
 }
@@ -31,9 +31,9 @@ void World::removeEntity(const EntityPtr& entity) {
 	else {
 		LightPtr light = std::dynamic_pointer_cast<Light>(entity);
 		if (light) {
-			m_lights.erase(
-				std::remove(m_lights.begin(), m_lights.end(), light),
-				m_lights.end()
+			State::lights.erase(
+				std::remove(State::lights.begin(), State::lights.end(), light),
+				State::lights.end()
 			);
 		}
 	}
@@ -47,10 +47,6 @@ void World::update(float deltaTime) {
 
 void World::draw() {
 	State::ambient = m_ambient;
-	State::lights.clear();
-	for (size_t i = 0; i < m_lights.size(); ++i) {
-		State::lights.push_back(m_lights[i]);
-	}
 
 	for (size_t i = 0; i < m_cameras.size(); ++i) {
 		m_cameras[i]->prepare();

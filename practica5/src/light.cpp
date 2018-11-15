@@ -1,6 +1,16 @@
 #include "light.h"
 #include "state.h"
 
+LightPtr Light::create() {
+	if (State::lights.size() < MAX_LIGHTS) {
+		return LightPtr(new Light(), [](Light* p) { delete p; });
+	}
+	else {
+		return nullptr;
+	}
+	
+}
+
 void Light::prepare(int index, ShaderPtr& shader) const {
 	glm::vec4 lightVector(0.0f);
 

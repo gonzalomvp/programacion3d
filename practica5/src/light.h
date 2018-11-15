@@ -12,7 +12,7 @@ public:
 		POINT
 	};
 
-	static LightPtr create() { return LightPtr(new Light(), [](Light* p) { delete p; }); }
+	static LightPtr create();
 
 	Type			 getType             () const                 { return m_type;              }
 	void			 setType             (Type type)              { m_type = type;              }

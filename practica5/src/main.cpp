@@ -119,19 +119,23 @@ int main() {
 
 	// Create lights
 	LightPtr directionalLight = Light::create();
-	directionalLight->setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
-	directionalLight->setType(Light::DIRECTIONAL);
-	directionalLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
-	world->addEntity(directionalLight);
+	if (directionalLight) {
+		directionalLight->setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
+		directionalLight->setType(Light::DIRECTIONAL);
+		directionalLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
+		world->addEntity(directionalLight);
+	}
 
 	LightPtr pointLight = Light::create();
-	pointLight->setPosition(model->getPosition() + glm::vec3(5.0f, 0.0f, 0.0f));
-	pointLight->setType(Light::POINT);
-	pointLight->setColor(glm::vec3(1.0f, 0.0f, 0.0f));
-	pointLight->setLinearAttenuation(0.2f);
-	pointLight->setCallback(moveLight);
-	pointLight->setUserData(model);
-	world->addEntity(pointLight);
+	if (pointLight) {
+		pointLight->setPosition(model->getPosition() + glm::vec3(5.0f, 0.0f, 0.0f));
+		pointLight->setType(Light::POINT);
+		pointLight->setColor(glm::vec3(1.0f, 0.0f, 0.0f));
+		pointLight->setLinearAttenuation(0.2f);
+		pointLight->setCallback(moveLight);
+		pointLight->setUserData(model);
+		world->addEntity(pointLight);
+	}
 
 	// main loop
 	double lastTime = glfwGetTime();
