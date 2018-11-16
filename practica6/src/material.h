@@ -43,15 +43,13 @@ public:
 
 private:
 	Material(const TexturePtr& tex, const ShaderPtr& shader, glm::vec4 color, uint8_t shininess)
-		: m_texture(tex), m_shader(shader), m_color(color), m_shininess(shininess), m_lighting(true), m_culling(false), m_depthWrite(true){}
+		: m_texture(tex), m_shader(shader), m_color(color), m_shininess(shininess), m_blendMode(ALPHA), m_lighting(true), m_culling(false), m_depthWrite(true){}
 	~Material() {}
 
 	TexturePtr m_texture;
 	ShaderPtr  m_shader;
 	glm::vec4  m_color;
 	uint8_t    m_shininess;
-
-	//Añadir al constructor!!!!!!!!!!!!!!!!
 	BlendMode  m_blendMode;
 	bool       m_lighting;
 	bool       m_culling;
