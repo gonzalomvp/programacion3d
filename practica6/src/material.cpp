@@ -22,7 +22,7 @@ void Material::prepare() {
 	}
 
 	shader->setInt(shader->getLocation("useTexture"), useTexture);
-	shader->setVec3(shader->getLocation("color"), glm::vec3(m_color.r, m_color.g, m_color.b));
+	shader->setVec4(shader->getLocation("color"), glm::vec4(m_color.r, m_color.g, m_color.b, m_color.a));
 	shader->setInt(shader->getLocation("shininess"), m_shininess);
 
 	switch (m_blendMode) {

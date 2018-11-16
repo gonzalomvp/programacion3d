@@ -1,8 +1,15 @@
 #include "emitter.h"
 
 void Emitter::update(float deltaTime) {
-	for (size_t i = 0; i < m_particles.size(); ++i) {
-		m_particles[i]->update(deltaTime);
+	auto it = m_particles.begin();
+	while (it != m_particles.end()) {
+		(*it)->update(deltaTime);
+		if ((*it)->getRemainingLifetime() <= 0.0f) {
+			it = m_particles.erase(it);
+		}
+		else {
+			it++;
+		}
 	}
 	
 	m_pendingParticles += glm::linearRand(m_rateRange[0], m_rateRange[1]) * deltaTime;

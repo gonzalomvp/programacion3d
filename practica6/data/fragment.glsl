@@ -1,13 +1,12 @@
 uniform sampler2D texSampler;
 uniform bool useTexture;
-uniform vec3 color;
+uniform vec4 color;
 uniform int shininess;
 uniform int numLights;
 uniform vec3 ambient;
 uniform vec4[8] lightVectors;
 uniform vec3[8] lightColors;
 uniform float[8] lightAttenuations;
-varying vec3 fcolor;
 varying vec2 ftex;
 varying vec4 fpos;
 varying vec4 fN;
@@ -47,10 +46,10 @@ void main() {
 		color = texture2D(texSampler, ftex) * color;
 	}
 	if (numLights > 0) {
-		gl_FragColor = vec4(diffuse * color + specular, 1);
+		gl_FragColor = vec4(diffuse, 1) * color + vec4(specular, 1);
 	}
 	else {
-		gl_FragColor = vec4(color, 1);
+		gl_FragColor = color;
 	}
 	
 	
