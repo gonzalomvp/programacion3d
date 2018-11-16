@@ -2,7 +2,6 @@ uniform mat4 MVP;
 uniform mat4 ModelView;
 uniform mat4 Normal;
 attribute vec3 vpos;
-attribute vec3 vcolor;
 attribute vec2 vtex;
 attribute vec3 vnormal;
 varying vec2 ftex;
