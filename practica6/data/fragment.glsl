@@ -32,7 +32,7 @@ void main() {
 		float NdotL = max(0.0f, dot(N, L));
 		diffuse += NdotL * lightColors[i] * att;
 
-		if (dot(N, L) > 0.0f) {
+		if (dot(N, L) > 0.0f && shininess > 0) {
 			vec3 H = vec3(fpos.x, fpos.y, fpos.z);
 			H = normalize(H);
 			H = L - H;

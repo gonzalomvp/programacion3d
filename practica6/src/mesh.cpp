@@ -16,7 +16,7 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			pugi::xml_node materialNode = bufferNode.child("material");
 			
 			glm::vec4 color(1.0f);
-			uint8_t shininess = 128;
+			uint8_t shininess = 0;
 			TexturePtr texture = nullptr;
 			std::vector<float> texcoords;
 			std::vector<float> normals;

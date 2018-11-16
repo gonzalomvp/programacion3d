@@ -13,7 +13,6 @@ public:
 
 	float        getRemainingLifetime() const      { return m_remaingLifetime; }
 	virtual void update(float deltaTime) override;
-	virtual void draw() override;
 
 private:
 	Particle(const MaterialPtr& mat, const glm::vec3& vel, float spinVel, float lifetime, bool autofade) : 

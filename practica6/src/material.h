@@ -36,10 +36,7 @@ public:
 	bool		       getDepthWrite() const             { return m_depthWrite;                                 }
 	void		       setDepthWrite(bool enable)        { m_depthWrite = enable;                               }
 
-
 	void prepare();
-
-
 
 private:
 	Material(const TexturePtr& tex, const ShaderPtr& shader, glm::vec4 color, uint8_t shininess)

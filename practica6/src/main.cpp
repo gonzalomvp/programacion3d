@@ -18,51 +18,55 @@ typedef std::shared_ptr<CameraData> CameraDataPtr;
 struct CameraData {
 	GLFWwindow* win;
 	glm::dvec2 mouseCursorPrev;
+	const EntityPtr pivot;
 
-	CameraData(GLFWwindow* _win, glm::dvec2 _mouseCursor) : win(_win), mouseCursorPrev(_mouseCursor) {}
+	CameraData(GLFWwindow* _win, glm::dvec2 _mouseCursor, const EntityPtr& _pivot) : win(_win), mouseCursorPrev(_mouseCursor), pivot(_pivot) {}
 
 	static void update(Entity& entity, float deltaTime) {
 		CameraDataPtr data = std::static_pointer_cast<CameraData>(entity.getUserData());
-		glm::dvec2 mouseCursor;
-		glfwGetCursorPos(data->win, &mouseCursor.x, &mouseCursor.y);
-		glm::dvec2 speedMouse = data->mouseCursorPrev - mouseCursor;
-		data->mouseCursorPrev = mouseCursor;
+		EntityPtr pivot = data->pivot;
 
-		glm::vec3 cameraRotation = entity.getEuler() + glm::vec3(CAMERA_ROT_SPEED * static_cast<float>(speedMouse.y), CAMERA_ROT_SPEED * static_cast<float>(speedMouse.x), 0.0f);
-		cameraRotation = glm::vec3(glm::clamp(cameraRotation.x, -80.0f, 80.0f), cameraRotation.y, cameraRotation.z);
-		entity.setEuler(cameraRotation);
+		glm::vec2 pivotPos(pivot->getPosition().x, pivot->getPosition().z);
+		glm::vec2 cameraPos(entity.getPosition().x, entity.getPosition().z);
+		float angle = glm::degrees(atan2(cameraPos.y - pivotPos.y, cameraPos.x - pivotPos.x));
 
-		glm::vec3 moveDirection;
-		if (glfwGetKey(data->win, GLFW_KEY_W)) {
-			moveDirection += glm::vec3(0.0f, 0.0f, -1.0f);
-		}
-		if (glfwGetKey(data->win, GLFW_KEY_S)) {
-			moveDirection += glm::vec3(0.0f, 0.0f, 1.0f);
-		}
-		if (glfwGetKey(data->win, GLFW_KEY_D)) {
-			moveDirection += glm::vec3(1.0f, 0.0f, 0.0f);
-		}
-		if (glfwGetKey(data->win, GLFW_KEY_A)) {
-			moveDirection += glm::vec3(-1.0f, 0.0f, 0.0f);
-		}
-		if (glm::length(moveDirection) != 0) {
-			moveDirection = glm::normalize(moveDirection) * CAMERA_MOVE_SPEED * deltaTime;
-			entity.move(moveDirection);
-		}
+		angle += 20.0f * deltaTime;
+		glm::vec2 newPos = glm::vec2(cosf(glm::radians(angle)), sinf(glm::radians(angle))) * 25.0f;
+		entity.setPosition(pivot->getPosition() + glm::vec3(newPos.x, 0.0f, newPos.y));
+
+		//glm::dvec2 mouseCursor;
+		//glfwGetCursorPos(data->win, &mouseCursor.x, &mouseCursor.y);
+		//glm::dvec2 speedMouse = data->mouseCursorPrev - mouseCursor;
+		//data->mouseCursorPrev = mouseCursor;
+
+		//glm::vec3 cameraRotation = entity.getEuler() + glm::vec3(CAMERA_ROT_SPEED * static_cast<float>(speedMouse.y), CAMERA_ROT_SPEED * static_cast<float>(speedMouse.x), 0.0f);
+		//cameraRotation = glm::vec3(glm::clamp(cameraRotation.x, -80.0f, 80.0f), cameraRotation.y, cameraRotation.z);
+		//entity.setEuler(cameraRotation);
+
+		//glm::vec3 moveDirection;
+		//if (glfwGetKey(data->win, GLFW_KEY_W)) {
+		//	moveDirection += glm::vec3(0.0f, 0.0f, -1.0f);
+		//}
+		//if (glfwGetKey(data->win, GLFW_KEY_S)) {
+		//	moveDirection += glm::vec3(0.0f, 0.0f, 1.0f);
+		//}
+		//if (glfwGetKey(data->win, GLFW_KEY_D)) {
+		//	moveDirection += glm::vec3(1.0f, 0.0f, 0.0f);
+		//}
+		//if (glfwGetKey(data->win, GLFW_KEY_A)) {
+		//	moveDirection += glm::vec3(-1.0f, 0.0f, 0.0f);
+		//}
+		//if (glm::length(moveDirection) != 0) {
+		//	moveDirection = glm::normalize(moveDirection) * CAMERA_MOVE_SPEED * deltaTime;
+		//	entity.move(moveDirection);
+		//}
 	}
 };
 
-void moveLight(Entity& entity, float deltaTime) {
-	EntityPtr model = std::static_pointer_cast<Entity>(entity.getUserData());
-	glm::vec2 modelPos(model->getPosition().x, model->getPosition().z);
-	glm::vec2 currentPos(entity.getPosition().x, entity.getPosition().z);
-	float angle = glm::degrees(atan2(currentPos.y - modelPos.y, currentPos.x - modelPos.x));
-
-	//printf("angle: %f\n", angle);
-	//printf("dist: %f\n", glm::length(model->getPosition() - entity.getPosition()));
-	angle += 20.0f * deltaTime;
-	glm::vec2 newPos = glm::vec2(cosf(glm::radians(angle)), sinf(glm::radians(angle))) * 5.0f;
-	entity.setPosition(model->getPosition() + glm::vec3(newPos.x, 0.0f, newPos.y));
+void rotateModel(Entity& entity, float deltaTime) {
+	float angle = entity.getEuler().y;
+	angle -= 20.0f * deltaTime;
+	entity.setEuler(glm::vec3(entity.getEuler().x, angle, entity.getEuler().z));
 }
 
 int main() {
@@ -102,6 +106,7 @@ int main() {
 	model->setScale(glm::vec3(0.01f));
 	model->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
 	//model->setPosition(glm::vec3(20.0f, 30.0f, -10.0f));
+	model->setCallback(rotateModel);
 	world->addEntity(model);
 
 	// Create Emitters
@@ -112,12 +117,13 @@ int main() {
 	smokeMat->setDepthWrite(false);
 
 	EmitterPtr smokeEmitter = Emitter::create(smokeMat);
-	smokeEmitter->setPosition(glm::vec3(0.0f, 6.0f, 0.0f));
+	smokeEmitter->setPosition(glm::vec3(0.0f, 7.0f, 0.0f));
 	smokeEmitter->setRateRange(5.0f, 10.0f);
 	smokeEmitter->setLifetimeRange(1.0f, 5.0f);
 	smokeEmitter->setVelocityRange(glm::vec3(-0.1f, 1.0f, -0.1f), glm::vec3(0.1f, 4.0f, 0.1f));
 	smokeEmitter->setSpinVelocityRange(30.0f, 60.0f);
-	smokeEmitter->setScaleRange(0.025f, 0.05f);
+	smokeEmitter->setScaleRange(0.05f, 0.1f);
+	smokeEmitter->emit(true);
 	world->addEntity(smokeEmitter);
 
 
@@ -128,46 +134,37 @@ int main() {
 	flameMat->setDepthWrite(false);
 
 	EmitterPtr flameEmitter = Emitter::create(flameMat);
-	flameEmitter->setPosition(glm::vec3(0.0f, 6.0f, 0.0f));
+	flameEmitter->setPosition(glm::vec3(0.0f, 7.0f, 0.0f));
 	flameEmitter->setRateRange(10.0f, 25.0f);
 	flameEmitter->setLifetimeRange(0.5f, 0.5f);
 	flameEmitter->setVelocityRange(glm::vec3(-1.0f, 5.0f, -1.0f), glm::vec3(1.0f, 10.0f, 1.0f));
 	flameEmitter->setSpinVelocityRange(0.0f, 0.0f);
-	flameEmitter->setScaleRange(0.0125f, 0.05f);
+	flameEmitter->setScaleRange(0.025f, 0.1f);
+	flameEmitter->emit(true);
 	world->addEntity(flameEmitter);
 
 	// Create Camera
 	CameraPtr camera = Camera::create();
-	camera->setPosition(glm::vec3(0.0f, 3.0f, 15.0f));
-	//camera->setEuler(glm::vec3(-20.0f, 5.0f, 0.0f));
+	camera->setPosition(glm::vec3(0.0f, 20.0f, 30.0f));
+	camera->setEuler(glm::vec3(-25.0f, 0.0f, 0.0f));
 	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.0f));
-	camera->setCallback(CameraData::update);
+	//camera->setCallback(CameraData::update);
 	glm::dvec2 mouseCursor;
 	glfwGetCursorPos(win, &mouseCursor.x, &mouseCursor.y);
-	camera->setUserData(std::make_shared<CameraData>(win, mouseCursor));
+	camera->setUserData(std::make_shared<CameraData>(win, mouseCursor, model));
 	world->addEntity(camera);
 
 	// Set ambient color
 	world->setAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
 
 	// Create lights
-	LightPtr directionalLight = Light::create();
-	if (directionalLight) {
-		directionalLight->setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
-		directionalLight->setType(Light::DIRECTIONAL);
-		directionalLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
-		//world->addEntity(directionalLight);
-	}
-
 	LightPtr pointLight = Light::create();
 	if (pointLight) {
-		pointLight->setPosition(model->getPosition() + glm::vec3(5.0f, 0.0f, 0.0f));
+		pointLight->setPosition(model->getPosition() + glm::vec3(0.0f, 8.0f, 0.0f));
 		pointLight->setType(Light::POINT);
-		pointLight->setColor(glm::vec3(1.0f, 0.0f, 0.0f));
+		pointLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
 		pointLight->setLinearAttenuation(0.2f);
-		pointLight->setCallback(moveLight);
-		pointLight->setUserData(model);
-		//world->addEntity(pointLight);
+		world->addEntity(pointLight);
 	}
 
 	// main loop

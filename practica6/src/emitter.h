@@ -17,16 +17,15 @@ public:
 	void			setScaleRange(float min, float max)                          { m_scaleRange[0]        = min; m_scaleRange[1]        = max; }
 	void			setLifetimeRange(float min, float max)                       { m_lifetimeRange[0]     = min; m_lifetimeRange[1]     = max; }
 	void			setColorRange(const glm::vec4& min, const glm::vec4& max)    { m_colorRange[0]        = min; m_colorRange[1]        = max; }
-
-	void			emit(bool enable);
-	bool			isEmitting();
+	void			emit(bool enable)                                            { m_isEmitting = enable;                                      }
+	bool			isEmitting()                                                 { return m_isEmitting;                                        }
 	virtual void	update(float deltaTime) override;
 	virtual void	draw() override;
 
 protected:
 	Emitter(const MaterialPtr& mat, bool autofade) : 
-		m_material(mat), m_autofade(autofade), m_rateRange{0.0f}, m_velocityRange{ glm::vec3(0.0f) }, m_spinVelocityRange{ 0.0f },
-		m_scaleRange{ 1.0f }, m_lifetimeRange{ 0.0f }, m_colorRange{ glm::vec4(1.0f) }, m_pendingParticles(0.0f) {}
+		m_material(mat), m_autofade(autofade), m_rateRange{ 0.0f, 0.0f }, m_velocityRange{ glm::vec3(0.0f), glm::vec3(0.0f) }, m_spinVelocityRange{ 0.0f, 0.0f },
+		m_scaleRange{ 1.0f, 1.0f }, m_lifetimeRange{ 0.0f, 0.0f }, m_colorRange{ glm::vec4(1.0f), glm::vec4(1.0f) }, m_pendingParticles(0.0f), m_isEmitting(false) {}
 	~Emitter() {}
 
 	MaterialPtr m_material;
@@ -37,6 +36,7 @@ protected:
 	float       m_scaleRange[2];
 	float       m_lifetimeRange[2];
 	glm::vec4   m_colorRange[2];
+	bool        m_isEmitting;
 
 	std::vector<ParticlePtr> m_particles;
 	float                    m_pendingParticles;

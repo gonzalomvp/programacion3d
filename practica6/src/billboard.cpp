@@ -1,6 +1,6 @@
 #include "billboard.h"
 
-Billboard::Billboard(const MaterialPtr& mat) : m_material(mat), m_size(1.0f), m_spin(0.0f) {
+Billboard::Billboard(const MaterialPtr& mat) : m_material(mat), m_size(1.0f), m_spin(0.0f), m_buffer(nullptr) {
 	std::vector<Vertex> vertices;
 	vertices.push_back(Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
 	vertices.push_back(Vertex(glm::vec3(-0.5f,  0.5f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
