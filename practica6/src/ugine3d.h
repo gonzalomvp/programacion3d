@@ -4,6 +4,7 @@
 #include "buffer.h"
 #include "camera.h"
 #include "common.h"
+#include "emitter.h"
 #include "entity.h"
 #include "light.h"
 #include "mesh.h"

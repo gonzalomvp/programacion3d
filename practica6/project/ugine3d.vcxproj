@@ -145,6 +145,7 @@
     <ClInclude Include="..\src\buffer.h" />
     <ClInclude Include="..\src\camera.h" />
     <ClInclude Include="..\src\common.h" />
+    <ClInclude Include="..\src\emitter.h" />
     <ClInclude Include="..\src\entity.h" />
     <ClInclude Include="..\src\light.h" />
     <ClInclude Include="..\src\material.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="..\src\billboard.cpp" />
     <ClCompile Include="..\src\buffer.cpp" />
     <ClCompile Include="..\src\camera.cpp" />
+    <ClCompile Include="..\src\emitter.cpp" />
     <ClCompile Include="..\src\entity.cpp" />
     <ClCompile Include="..\src\light.cpp" />
     <ClCompile Include="..\src\main.cpp" />

@@ -52,9 +52,13 @@ void Material::prepare() {
 	}
 
 	// Prepare Lights
+	int numLights = 0;
 	shader->setVec3(shader->getLocation("ambient"), State::ambient);
-	shader->setInt(shader->getLocation("numLights"), static_cast<int>(State::lights.size()));
-	for (size_t i = 0; i < State::lights.size(); ++i) {
-		State::lights[i]->prepare(static_cast<int>(i), shader);
+	if (m_lighting) {
+		numLights = static_cast<int>(State::lights.size());
+		for (size_t i = 0; i < State::lights.size(); ++i) {
+			State::lights[i]->prepare(static_cast<int>(i), shader);
+		}
 	}
+	shader->setInt(shader->getLocation("numLights"), numLights);
 }

@@ -103,11 +103,30 @@ int main() {
 	//model->setPosition(glm::vec3(20.0f, 30.0f, -10.0f));
 	world->addEntity(model);
 
-	// Create Billboard
-	ParticlePtr particle = Particle::create(Material::create(Texture::load("data/front.png"), nullptr), glm::vec3(0.1f), 10, -1, false);
-	particle->setPosition(glm::vec3(0.0f, 7.0f, 0.0f));
-	particle->setSpin(0.0f);
-	world->addEntity(particle);
+	// Create Emitters
+	MaterialPtr smokeMat = Material::create(Texture::load("data/smoke.png"), nullptr);
+	smokeMat->setBlendMode(Material::ALPHA);
+	smokeMat->setLighting(false);
+	smokeMat->setCulling(false);
+	smokeMat->setDepthWrite(false);
+
+	EmitterPtr smokeEmitter = Emitter::create(smokeMat);
+	smokeEmitter->setPosition(glm::vec3(0.0f, 6.0f, 0.0f));
+	smokeEmitter->setRateRange(5.0f, 10.0f);
+	smokeEmitter->setLifetimeRange(1.0f, 5.0f);
+	smokeEmitter->setVelocityRange(glm::vec3(-0.1f, 1.0f, -0.1f), glm::vec3(0.1f, 4.0f, 0.1f));
+	smokeEmitter->setSpinVelocityRange(30.0f, 60.0f);
+	smokeEmitter->setScaleRange(0.05f, 0.1f);
+	world->addEntity(smokeEmitter);
+
+	EmitterPtr flameEmitter = Emitter::create(Material::create(Texture::load("data/flame.png"), nullptr));
+	flameEmitter->setPosition(glm::vec3(0.0f, 6.0f, 0.0f));
+	flameEmitter->setRateRange(10.0f, 25.0f);
+	flameEmitter->setLifetimeRange(0.5f, 0.5f);
+	flameEmitter->setVelocityRange(glm::vec3(-1.0f, 5.0f, -1.0f), glm::vec3(1.0f, 10.0f, 1.0f));
+	flameEmitter->setSpinVelocityRange(0.0f, 0.0f);
+	flameEmitter->setScaleRange(0.0025f, 0.01f);
+	//world->addEntity(flameEmitter);
 
 	// Create Camera
 	CameraPtr camera = Camera::create();

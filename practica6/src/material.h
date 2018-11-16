@@ -43,7 +43,7 @@ public:
 
 private:
 	Material(const TexturePtr& tex, const ShaderPtr& shader, glm::vec4 color, uint8_t shininess)
-		: m_texture(tex), m_shader(shader), m_color(color), m_shininess(shininess), m_culling(GL_FALSE), m_depthWrite(GL_TRUE){}
+		: m_texture(tex), m_shader(shader), m_color(color), m_shininess(shininess), m_lighting(true), m_culling(false), m_depthWrite(true){}
 	~Material() {}
 
 	TexturePtr m_texture;
