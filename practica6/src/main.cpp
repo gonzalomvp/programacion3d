@@ -32,7 +32,12 @@ struct CameraData {
 
 		angle += 20.0f * deltaTime;
 		glm::vec2 newPos = glm::vec2(cosf(glm::radians(angle)), sinf(glm::radians(angle))) * 25.0f;
-		entity.setPosition(pivot->getPosition() + glm::vec3(newPos.x, 0.0f, newPos.y));
+		entity.setPosition(pivot->getPosition() + glm::vec3(newPos.x, entity.getPosition().y, newPos.y));
+		glm::mat4 lookAtMatrix = glm::lookAt(entity.getPosition(), pivot->getPosition(), glm::vec3(0.0f, 1.0f, 0.0f));
+		//entity.setQuaternion(glm::conjugate(glm::quat(lookAtMatrix)));
+		//entity.setQuaternion(glm::quat(glm::inverse(lookAtMatrix)));
+		entity.setQuaternion(glm::quat(glm::transpose(lookAtMatrix)));
+
 
 		//glm::dvec2 mouseCursor;
 		//glfwGetCursorPos(data->win, &mouseCursor.x, &mouseCursor.y);
@@ -64,9 +69,9 @@ struct CameraData {
 };
 
 void rotateModel(Entity& entity, float deltaTime) {
-	float angle = entity.getEuler().y;
-	angle -= 20.0f * deltaTime;
-	entity.setEuler(glm::vec3(entity.getEuler().x, angle, entity.getEuler().z));
+	//float angle = entity.getEuler().y;
+	//angle -= 20.0f * deltaTime;
+	//entity.setEuler(glm::vec3(entity.getEuler().x, angle, entity.getEuler().z));
 }
 
 int main() {
@@ -86,7 +91,7 @@ int main() {
 		return -1;
 	}
 	glfwMakeContextCurrent(win);
-	glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if ( !init() ) {
 		std::cout << "could not initialize opengl extensions" << std::endl;
@@ -148,7 +153,7 @@ int main() {
 	camera->setPosition(glm::vec3(0.0f, 20.0f, 30.0f));
 	camera->setEuler(glm::vec3(-25.0f, 0.0f, 0.0f));
 	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.0f));
-	//camera->setCallback(CameraData::update);
+	camera->setCallback(CameraData::update);
 	glm::dvec2 mouseCursor;
 	glfwGetCursorPos(win, &mouseCursor.x, &mouseCursor.y);
 	camera->setUserData(std::make_shared<CameraData>(win, mouseCursor, model));
