@@ -11,6 +11,7 @@ bool init() {
 		glEnable(GL_SCISSOR_TEST);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 		// create default shader
 		ShaderPtr shader = Shader::create(readString("data/vertex.glsl"), readString("data/fragment.glsl"));

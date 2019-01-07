@@ -13,12 +13,24 @@ void Material::prepare() {
 	glm::mat4 MVP = State::projectionMatrix * ModelView;
 	shader->setMatrix(shader->getLocation("MVP"), MVP);
 
-	shader->setInt(shader->getLocation("texSampler"), 0);
+	
+	shader->setInt(shader->getLocation("normalTexSampler"), 1);
 
 	int useTexture = 0;
+
 	if (m_texture) {
-		m_texture->bind();
-		useTexture = 1;
+		if (m_texture->isCube()) {
+			shader->setInt(shader->getLocation("cubeSampler"), 2);
+			m_texture->bind(GL_TEXTURE2);
+		}
+		else {
+			shader->setInt(shader->getLocation("texSampler"), 0);
+			m_texture->bind(GL_TEXTURE0);
+			useTexture = 1;
+		}
+	}
+	if (m_NormalTexture) {
+		m_NormalTexture->bind(GL_TEXTURE1);
 	}
 
 	shader->setInt(shader->getLocation("useTexture"), useTexture);

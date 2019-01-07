@@ -14,6 +14,7 @@ public:
 	static glm::mat4             modelMatrix;
 	static std::vector<LightPtr> lights;
 	static glm::vec3             ambient;
+	static glm::vec3             eyePos;
 
 private:
 	State() {}

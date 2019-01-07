@@ -18,8 +18,10 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			glm::vec4 color(1.0f);
 			uint8_t shininess = 0;
 			TexturePtr texture = nullptr;
+			TexturePtr normalTexture = nullptr;
 			std::vector<float> texcoords;
 			std::vector<float> normals;
+			std::vector<float> tangents;
 
 			// Load Material properties if they exist
 			if (materialNode.child("color")) {
@@ -34,10 +36,33 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 
 			if (materialNode.child("texture")) {
 				std::string textureStr = materialNode.child("texture").text().as_string();
+				std::vector<std::string> textureFiles = splitString<std::string>(textureStr, ',');
+
+				if (textureFiles.size() == 6) {
+					texture = Texture::load(  (extractPath(filename) + textureFiles[0]).c_str()
+											, (extractPath(filename) + textureFiles[1]).c_str()
+											, (extractPath(filename) + textureFiles[2]).c_str()
+											, (extractPath(filename) + textureFiles[3]).c_str()
+											, (extractPath(filename) + textureFiles[4]).c_str()
+											, (extractPath(filename) + textureFiles[5]).c_str());
+
+					//std::string texcoordsStr = bufferNode.child("texcoords").text().as_string();
+					//texcoords = splitString<float>(texcoordsStr, ',');
+				}
+
+				else {
+					std::string textureFile = extractPath(std::string(filename)) + textureStr;
+					texture = Texture::load(textureFile.c_str());
+					std::string texcoordsStr = bufferNode.child("texcoords").text().as_string();
+					texcoords = splitString<float>(texcoordsStr, ',');
+				}
+
+			}
+
+			if (materialNode.child("normal_texture")) {
+				std::string textureStr = materialNode.child("normal_texture").text().as_string();
 				std::string textureFile = extractPath(std::string(filename)) + textureStr;
-				texture = Texture::load(textureFile.c_str());
-				std::string texcoordsStr = bufferNode.child("texcoords").text().as_string();
-				texcoords = splitString<float>(texcoordsStr, ',');
+				normalTexture = Texture::load(textureFile.c_str());
 			}
 			
 			// Load indexes and coords
@@ -51,6 +76,12 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 				std::string normalsStr = bufferNode.child("normals").text().as_string();
 				normals = splitString<float>(normalsStr, ',');
 			}
+
+			// Load tangents if they exist
+			if (bufferNode.child("tangents")) {
+				std::string tangentsStr = bufferNode.child("tangents").text().as_string();
+				tangents = splitString<float>(tangentsStr, ',');
+			}
 			
 			// Create vertices
 			std::vector<Vertex> vertices;
@@ -59,6 +90,7 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 				glm::vec3 pos(glm::vec3(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2]));
 				glm::vec2 tex(0.0f);
 				glm::vec3 normal(0.0f);
+				glm::vec3 tangent(0.0f); // comprobar si esta inicializacion es correcta o hay que usar otro vector
 
 				if (texcoords.size() > (i * 2 + 1)) {
 					tex = glm::vec2(texcoords[i * 2], texcoords[i * 2 + 1]);
@@ -68,10 +100,16 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 					normal = glm::vec3(glm::vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]));
 				}
 
-				Vertex vertex(pos, tex, normal);
+				if (tangents.size() > (i * 3 + 2)) {
+					tangent = glm::vec3(glm::vec3(tangents[i * 3], tangents[i * 3 + 1], tangents[i * 3 + 2]));
+				}
+
+				Vertex vertex(pos, tex, normal, tangent);
 				vertices.push_back(vertex);
 			}
-			mesh->addBuffer(Buffer::create(vertices, indexes), Material::create(texture, nullptr, color, shininess));
+			MaterialPtr material = Material::create(texture, nullptr, color, shininess);
+			material->setNormalTexture(normalTexture);
+			mesh->addBuffer(Buffer::create(vertices, indexes), material);
 		}
 		return mesh;
 	}
