@@ -4,6 +4,8 @@ void Material::prepare() {
 	ShaderPtr shader = getShader();
 	shader->use();
 
+	shader->setMatrix(shader->getLocation("Model"), State::modelMatrix);
+
 	glm::mat4 ModelView = State::viewMatrix * State::modelMatrix;
 	shader->setMatrix(shader->getLocation("ModelView"), ModelView);
 	
@@ -13,7 +15,8 @@ void Material::prepare() {
 	glm::mat4 MVP = State::projectionMatrix * ModelView;
 	shader->setMatrix(shader->getLocation("MVP"), MVP);
 
-	
+	shader->setVec3(shader->getLocation("eyePos"), State::eyePos);
+
 	shader->setInt(shader->getLocation("normalTexSampler"), 1);
 
 	int useTexture = 0;
@@ -29,8 +32,20 @@ void Material::prepare() {
 			useTexture = 1;
 		}
 	}
-	if (m_NormalTexture) {
-		m_NormalTexture->bind(GL_TEXTURE1);
+	if (m_normalTexture) {
+		m_normalTexture->bind(GL_TEXTURE1);
+	}
+
+	if (m_reflectionTexture) {
+		m_reflectionTexture->bind(GL_TEXTURE2);
+		shader->setInt(shader->getLocation("cubeSampler"), 2);
+		useTexture = 1;
+	}
+
+	if (m_refractionTexture) {
+		m_refractionTexture->bind(GL_TEXTURE2);
+		shader->setInt(shader->getLocation("cubeSampler"), 2);
+		useTexture = 1;
 	}
 
 	shader->setInt(shader->getLocation("useTexture"), useTexture);

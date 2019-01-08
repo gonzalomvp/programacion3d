@@ -4,8 +4,6 @@
 			<material>
 				<blend>alpha</blend>
 				<color>1,1,1,1</color>
-				<texture>bricks2.jpg</texture>
-				<normal_texture>bricks2_normal.jpg</normal_texture>
 				<shininess>16</shininess>
 				<culling>true</culling>
 				<depthwrite>true</depthwrite>

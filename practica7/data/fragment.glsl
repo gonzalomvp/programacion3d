@@ -14,6 +14,7 @@ varying vec4 fpos;
 varying vec4 fpos2;
 varying vec4 fN;
 varying mat3 TBN;
+varying vec3 uvw; 
 
 void main() {
 	vec3 diffuse = vec3(0.0f);
@@ -53,13 +54,16 @@ void main() {
 
 	if (useTexture) {
 		color = texture2D(texSampler, ftex) * color;
+		color = textureCube(cubeSampler, uvw);
 	}
 	else {
 		vec3 H = vec3(fpos2.x, fpos2.y, fpos2.z);
 		H = normalize(H);
-		color = textureCube(cubeSampler, H);
+		//color = textureCube(cubeSampler, H);
+		//color = textureCube(cubeSampler, uvw);
 	}
-	if (numLights > 0 && useTexture) {
+	if (numLights > 0 && true) {
+		//specular = vec3(0.0f);
 		gl_FragColor = vec4(diffuse, 1) * color + vec4(specular, 1);
 	}
 	else {

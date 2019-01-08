@@ -18,7 +18,7 @@ void main() {
 		diffuse = ambient;
 	}
 	
-	vec3 N = vec3(fN.x, fN.y, fN.z);
+	vec3 N = vec3(fN);
 	N = normalize(N);
 
 	for (int i = 0; i < numLights; ++i) {

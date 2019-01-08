@@ -18,6 +18,8 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			glm::vec4 color(1.0f);
 			uint8_t shininess = 0;
 			TexturePtr texture = nullptr;
+			TexturePtr reflectionTexture = nullptr;
+			TexturePtr refractionTexture = nullptr;
 			TexturePtr normalTexture = nullptr;
 			std::vector<float> texcoords;
 			std::vector<float> normals;
@@ -57,6 +59,34 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 					texcoords = splitString<float>(texcoordsStr, ',');
 				}
 
+			}
+
+			if (materialNode.child("reflect_texture")) {
+				std::string textureStr = materialNode.child("reflect_texture").text().as_string();
+				std::vector<std::string> textureFiles = splitString<std::string>(textureStr, ',');
+
+				if (textureFiles.size() == 6) {
+					reflectionTexture = Texture::load((extractPath(filename) + textureFiles[0]).c_str()
+						, (extractPath(filename) + textureFiles[1]).c_str()
+						, (extractPath(filename) + textureFiles[2]).c_str()
+						, (extractPath(filename) + textureFiles[3]).c_str()
+						, (extractPath(filename) + textureFiles[4]).c_str()
+						, (extractPath(filename) + textureFiles[5]).c_str());
+				}
+			}
+
+			if (materialNode.child("refract_texture")) {
+				std::string textureStr = materialNode.child("refract_texture").text().as_string();
+				std::vector<std::string> textureFiles = splitString<std::string>(textureStr, ',');
+
+				if (textureFiles.size() == 6) {
+					refractionTexture = Texture::load((extractPath(filename) + textureFiles[0]).c_str()
+						, (extractPath(filename) + textureFiles[1]).c_str()
+						, (extractPath(filename) + textureFiles[2]).c_str()
+						, (extractPath(filename) + textureFiles[3]).c_str()
+						, (extractPath(filename) + textureFiles[4]).c_str()
+						, (extractPath(filename) + textureFiles[5]).c_str());
+				}
 			}
 
 			if (materialNode.child("normal_texture")) {
@@ -108,7 +138,12 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 				vertices.push_back(vertex);
 			}
 			MaterialPtr material = Material::create(texture, nullptr, color, shininess);
+			material->setReflectionTexture(reflectionTexture);
+			material->setRefractionTexture(refractionTexture);
 			material->setNormalTexture(normalTexture);
+			if (refractionTexture) {
+				material->setBlendMode(Material::ALPHA);
+			}
 			mesh->addBuffer(Buffer::create(vertices, indexes), material);
 		}
 		return mesh;

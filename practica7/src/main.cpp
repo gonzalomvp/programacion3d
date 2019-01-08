@@ -28,20 +28,20 @@ struct CameraData {
 		EntityPtr pivot = data->pivot;
 		EntityPtr light = data->light;
 
-		glm::vec2 pivotPos(pivot->getPosition().x, pivot->getPosition().z);
-		glm::vec2 cameraPos(entity.getPosition().x, entity.getPosition().z);
-		float angle = glm::degrees(atan2(cameraPos.y - pivotPos.y, cameraPos.x - pivotPos.x));
+		//glm::vec2 pivotPos(pivot->getPosition().x, pivot->getPosition().z);
+		//glm::vec2 cameraPos(entity.getPosition().x, entity.getPosition().z);
+		//float angle = glm::degrees(atan2(cameraPos.y - pivotPos.y, cameraPos.x - pivotPos.x));
 
-		angle += -20.0f * deltaTime;
-		glm::vec2 newPos = glm::vec2(cosf(glm::radians(angle)), sinf(glm::radians(angle))) * 10.0f;
-		entity.setPosition(pivot->getPosition() + glm::vec3(newPos.x, entity.getPosition().y, newPos.y));
-		glm::mat4 lookAtMatrix = glm::lookAt(entity.getPosition(), pivot->getPosition(), glm::vec3(0.0f, 1.0f, 0.0f));
-		//entity.setQuaternion(glm::conjugate(glm::quat(lookAtMatrix)));
-		//entity.setQuaternion(glm::quat(glm::inverse(lookAtMatrix)));
-		entity.setQuaternion(glm::quat(glm::transpose(lookAtMatrix)));
+		//angle += -30.0f * deltaTime;
+		//glm::vec2 newPos = glm::vec2(cosf(glm::radians(angle)), sinf(glm::radians(angle))) * 10.0f;
+		//entity.setPosition(pivot->getPosition() + glm::vec3(newPos.x, entity.getPosition().y, newPos.y));
+		//glm::mat4 lookAtMatrix = glm::lookAt(entity.getPosition(), pivot->getPosition(), glm::vec3(0.0f, 1.0f, 0.0f));
+		////entity.setQuaternion(glm::conjugate(glm::quat(lookAtMatrix)));
+		////entity.setQuaternion(glm::quat(glm::inverse(lookAtMatrix)));
+		//entity.setQuaternion(glm::quat(glm::transpose(lookAtMatrix)));
 		
 
-		/*glm::dvec2 mouseCursor;
+		glm::dvec2 mouseCursor;
 		glfwGetCursorPos(data->win, &mouseCursor.x, &mouseCursor.y);
 		glm::dvec2 speedMouse = data->mouseCursorPrev - mouseCursor;
 		data->mouseCursorPrev = mouseCursor;
@@ -66,7 +66,7 @@ struct CameraData {
 		if (glm::length(moveDirection) != 0) {
 			moveDirection = glm::normalize(moveDirection) * CAMERA_MOVE_SPEED * deltaTime;
 			entity.move(moveDirection);
-		}*/
+		}
 
 		light->setPosition(entity.getPosition());
 	}
@@ -110,22 +110,43 @@ int main() {
 	MeshPtr skyboxMesh = Mesh::load("data/skybox.msh.xml");
 	ModelPtr skyboxModel = Model::create(skyboxMesh);
 	skyboxModel->setScale(glm::vec3(50.0f));
-	world->addEntity(skyboxModel);
+	//world->addEntity(skyboxModel);
+
+	
+
+	MeshPtr teapotMesh = Mesh::load("data/teapot_reflect.msh.xml");
+
+	// Create Model
+	ModelPtr model = Model::create(teapotMesh);
+	model->setScale(glm::vec3(1.0f));
+	model->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
+	model->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
+	model->setCallback(rotateModel);
+	world->addEntity(model);
+
+	MeshPtr suzanneMesh = Mesh::load("data/suzanne_refract.msh.xml");
+
+	// Create Model
+	model = Model::create(suzanneMesh);
+	model->setScale(glm::vec3(1.0f));
+	model->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
+	model->setPosition(glm::vec3(-3.0f, 0.0f, 0.0f));
+	model->setCallback(rotateModel);
+	world->addEntity(model);
 
 	// Load Mesh
 	MeshPtr cubeMesh = Mesh::load("data/cube.msh.xml");
-	//MeshPtr townMesh = Mesh::load("data/asian_town.msh.xml");
 
 	// Create Model
-	ModelPtr model = Model::create(cubeMesh);
+	model = Model::create(cubeMesh);
 	model->setScale(glm::vec3(1.0f));
 	model->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
-	//model->setPosition(glm::vec3(20.0f, 30.0f, -10.0f));
+	//model->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
 	model->setCallback(rotateModel);
 	world->addEntity(model);
 
 	// Set ambient color
-	world->setAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
+	world->setAmbient(glm::vec3(.2f));
 
 	// Create lights
 	LightPtr pointLight = Light::create();

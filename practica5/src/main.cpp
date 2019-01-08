@@ -123,7 +123,7 @@ int main() {
 		directionalLight->setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
 		directionalLight->setType(Light::DIRECTIONAL);
 		directionalLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
-		world->addEntity(directionalLight);
+		//world->addEntity(directionalLight);
 	}
 
 	LightPtr pointLight = Light::create();
