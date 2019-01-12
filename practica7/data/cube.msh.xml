@@ -3,7 +3,7 @@
 		<buffer>
 			<material>
 				<blend>alpha</blend>
-				<color>1,1,1,1</color>
+				<color>1,0,0,1</color>
 				<shininess>16</shininess>
 				<culling>true</culling>
 				<depthwrite>true</depthwrite>

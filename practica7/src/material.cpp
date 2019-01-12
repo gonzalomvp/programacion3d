@@ -39,13 +39,11 @@ void Material::prepare() {
 	if (m_reflectionTexture) {
 		m_reflectionTexture->bind(GL_TEXTURE2);
 		shader->setInt(shader->getLocation("cubeSampler"), 2);
-		useTexture = 1;
 	}
 
 	if (m_refractionTexture) {
-		m_refractionTexture->bind(GL_TEXTURE2);
-		shader->setInt(shader->getLocation("cubeSampler"), 2);
-		useTexture = 1;
+		//m_refractionTexture->bind(GL_TEXTURE2);
+		//shader->setInt(shader->getLocation("cubeSampler"), 2);
 	}
 
 	shader->setInt(shader->getLocation("useTexture"), useTexture);
