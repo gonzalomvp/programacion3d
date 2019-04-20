@@ -15,8 +15,13 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 		for (pugi::xml_node bufferNode = buffersNode.child("buffer"); bufferNode; bufferNode = bufferNode.next_sibling("buffer")) {
 			pugi::xml_node materialNode = bufferNode.child("material");
 			
+			// Default Material values
 			glm::vec4 color(1.0f);
 			uint8_t shininess = 0;
+			Material::BlendMode blendMode = Material::ALPHA;
+			bool lighting = true;
+			bool culling = true;
+			bool depthWrite = true;
 			TexturePtr texture = nullptr;
 			std::vector<float> texcoords;
 			std::vector<float> normals;
@@ -30,6 +35,28 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 
 			if (materialNode.child("shininess")) {
 				shininess = materialNode.child("shininess").text().as_uint();
+			}
+
+			if (materialNode.child("blend")) {
+				std::string blendModeStr = materialNode.child("blend").text().as_string();
+				if (blendModeStr == "add") {
+					blendMode = Material::ADD;
+				}
+				else if (blendModeStr == "mul") {
+					blendMode = Material::MUL;
+				}
+			}
+
+			if (materialNode.child("lighting")) {
+				lighting = materialNode.child("lighting").text().as_bool();
+			}
+
+			if (materialNode.child("culling")) {
+				culling = materialNode.child("culling").text().as_bool();
+			}
+
+			if (materialNode.child("depthwrite")) {
+				depthWrite = materialNode.child("depthwrite").text().as_bool();
 			}
 
 			if (materialNode.child("texture")) {
@@ -71,7 +98,7 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 				Vertex vertex(pos, tex, normal);
 				vertices.push_back(vertex);
 			}
-			mesh->addBuffer(Buffer::create(vertices, indexes), Material::create(texture, nullptr, color, shininess));
+			mesh->addBuffer(Buffer::create(vertices, indexes), Material::create(texture, shader, color, shininess, blendMode, lighting, culling, depthWrite));
 		}
 		return mesh;
 	}
