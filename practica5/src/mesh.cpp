@@ -71,7 +71,7 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 				Vertex vertex(pos, tex, normal);
 				vertices.push_back(vertex);
 			}
-			mesh->addBuffer(Buffer::create(vertices, indexes), Material::create(texture, nullptr, color, shininess));
+			mesh->addBuffer(Buffer::create(vertices, indexes), Material::create(texture, shader, color, shininess));
 		}
 		return mesh;
 	}
