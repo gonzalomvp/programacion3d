@@ -22,8 +22,8 @@ void Material::prepare() {
 	}
 
 	shader->setInt(shader->getLocation("useTexture"), useTexture);
-	shader->setVec4(shader->getLocation("color"), m_color);
-	shader->setInt(shader->getLocation("shininess"), m_shininess);
+	shader->setVec4(shader->getLocation("materialColor"), m_color);
+	shader->setInt(shader->getLocation("materialShininess"), m_shininess);
 
 	switch (m_blendMode) {
 		case Material::ALPHA:
@@ -54,7 +54,7 @@ void Material::prepare() {
 	// Prepare Lights
 	int numLights = 0;
 	if (m_lighting) {
-		shader->setVec3(shader->getLocation("ambient"), State::ambient);
+		shader->setVec3(shader->getLocation("ambientLight"), State::ambient);
 		numLights = static_cast<int>(State::lights.size());
 		for (size_t i = 0; i < State::lights.size(); ++i) {
 			State::lights[i]->prepare(static_cast<int>(i), shader);

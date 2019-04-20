@@ -25,7 +25,7 @@ public:
 protected:
 	Emitter(const MaterialPtr& mat, bool autofade) : 
 		m_material(mat), m_autofade(autofade), m_rateRange{ 0.0f, 0.0f }, m_velocityRange{ glm::vec3(0.0f), glm::vec3(0.0f) }, m_spinVelocityRange{ 0.0f, 0.0f },
-		m_scaleRange{ 1.0f, 1.0f }, m_lifetimeRange{ 0.0f, 0.0f }, m_colorRange{ glm::vec4(1.0f), glm::vec4(1.0f) }, m_pendingParticles(0.0f), m_isEmitting(false) {}
+		m_scaleRange{ 1.0f, 1.0f }, m_lifetimeRange{ 0.0f, 0.0f }, m_colorRange{ glm::vec4(1.0f), glm::vec4(1.0f) }, m_isEmitting(false), m_pendingParticles(0.0f) {}
 	~Emitter() {}
 
 	MaterialPtr m_material;

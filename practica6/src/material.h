@@ -17,7 +17,9 @@ public:
 		MUL
 	};
 
-	static MaterialPtr create(const TexturePtr& tex = nullptr, const ShaderPtr& shader = nullptr, glm::vec4 color = glm::vec4(1), uint8_t shininess = 0.0f) { return MaterialPtr(new Material(tex, shader, color, shininess), [](Material* p) { delete p; }); }
+	static MaterialPtr create(const TexturePtr& tex = nullptr, const ShaderPtr& shader = nullptr, glm::vec4 color = glm::vec4(1.0f), uint8_t shininess = 0.0f, BlendMode blendMode = ALPHA, bool lighting = true, bool culling = true, bool depthWrite = true) { 
+		return MaterialPtr(new Material(tex, shader, color, shininess, blendMode, lighting, culling, depthWrite), [](Material* p) { delete p; }); }
+
 	const ShaderPtr&   getShader() const                 { return (m_shader) ? m_shader : State::defaultShader; }
 	ShaderPtr&         getShader()                       { return (m_shader) ? m_shader : State::defaultShader; }
 	void               setShader(ShaderPtr& shader)      { m_shader = shader;                                   }
@@ -39,8 +41,8 @@ public:
 	void prepare();
 
 private:
-	Material(const TexturePtr& tex, const ShaderPtr& shader, glm::vec4 color, uint8_t shininess)
-		: m_texture(tex), m_shader(shader), m_color(color), m_shininess(shininess), m_blendMode(ALPHA), m_lighting(true), m_culling(false), m_depthWrite(true){}
+	Material(const TexturePtr& tex, const ShaderPtr& shader, glm::vec4 color, uint8_t shininess, BlendMode blendMode, bool lighting, bool culling, bool depthWrite)
+		: m_texture(tex), m_shader(shader), m_color(color), m_shininess(shininess), m_blendMode(blendMode), m_lighting(lighting), m_culling(culling), m_depthWrite(depthWrite) {}
 	~Material() {}
 
 	TexturePtr m_texture;
