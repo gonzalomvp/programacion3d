@@ -4,8 +4,6 @@
 #include "shader.h"
 #include "light.h"
 
-#define MAX_LIGHTS 8
-
 class State {
 public:
 	static ShaderPtr             defaultShader;

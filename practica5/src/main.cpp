@@ -14,6 +14,9 @@
 struct CameraData;
 typedef std::shared_ptr<CameraData> CameraDataPtr;
 
+struct LightData;
+typedef std::shared_ptr<LightData> LightDataPtr;
+
 struct CameraData {
 	GLFWwindow* win;
 	glm::dvec2 mouseCursorPrev;
@@ -51,18 +54,20 @@ struct CameraData {
 	}
 };
 
-void moveLight(Entity& entity, float deltaTime) {
-	EntityPtr model = std::static_pointer_cast<Entity>(entity.getUserData());
-	glm::vec2 modelPos(model->getPosition().x, model->getPosition().z);
-	glm::vec2 currentPos(entity.getPosition().x, entity.getPosition().z);
-	float angle = glm::degrees(atan2(currentPos.y - modelPos.y, currentPos.x - modelPos.x));
+struct LightData {
+	const glm::vec3 pivot;
+	float angularSpeed;
+	float distance;
 
-	//printf("angle: %f\n", angle);
-	//printf("dist: %f\n", glm::length(model->getPosition() - entity.getPosition()));
-	angle += 20.0f * deltaTime;
-	glm::vec2 newPos = glm::vec2(cosf(glm::radians(angle)), sinf(glm::radians(angle))) * 5.0f;
-	entity.setPosition(model->getPosition() + glm::vec3(newPos.x, 0.0f, newPos.y));
-}
+	LightData(const glm::vec3& _pivot, float _angularSpeed, float _distance) : pivot(_pivot), angularSpeed(_angularSpeed), distance(_distance) {}
+
+	static void rotateLight(Entity& entity, float deltaTime) {
+		LightDataPtr data = std::static_pointer_cast<LightData>(entity.getUserData());
+		float angle = atan2(entity.getPosition().z, entity.getPosition().x);
+		angle += glm::radians(data->angularSpeed) * deltaTime;
+		entity.setPosition(data->pivot + glm::vec3(cosf(angle), 0.0f, sinf(angle)) * data->distance);
+	}
+};
 
 int main() {
 	// init glfw
@@ -94,14 +99,28 @@ int main() {
 
 	// Load Mesh
 	MeshPtr bunnyMesh = Mesh::load("data/bunny.msh.xml");
-	//MeshPtr townMesh = Mesh::load("data/asian_town.msh.xml");
 
 	// Create Model
 	ModelPtr model = Model::create(bunnyMesh);
 	model->setScale(glm::vec3(10.0f));
 	model->setEuler(glm::vec3(90.0f, 0.0f, 0.0f));
-	//model->setPosition(glm::vec3(20.0f, 30.0f, -10.0f));
 	world->addEntity(model);
+
+	// Set ambient color
+	world->setAmbient(glm::vec3(0.2f));
+
+	// Create lights
+	LightPtr directionalLight = Light::create(Light::DIRECTIONAL);
+	directionalLight->setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
+	directionalLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
+	world->addEntity(directionalLight);
+
+	LightPtr pointLight = Light::create(Light::POINT);
+	pointLight->setColor(glm::vec3(1.0f, 0.0f, 0.0f));
+	pointLight->setLinearAttenuation(0.2f);
+	pointLight->setCallback(LightData::rotateLight);
+	pointLight->setUserData(std::make_shared<LightData>(model->getPosition() + glm::vec3(0.0f, 2.0f, 0.0f), 20.f, 5.0f));
+	world->addEntity(pointLight);
 
 	// Create Camera
 	CameraPtr camera = Camera::create();
@@ -113,29 +132,6 @@ int main() {
 	glfwGetCursorPos(win, &mouseCursor.x, &mouseCursor.y);
 	camera->setUserData(std::make_shared<CameraData>(win, mouseCursor));
 	world->addEntity(camera);
-
-	// Set ambient color
-	world->setAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
-
-	// Create lights
-	LightPtr directionalLight = Light::create();
-	if (directionalLight) {
-		directionalLight->setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
-		directionalLight->setType(Light::DIRECTIONAL);
-		directionalLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
-		//world->addEntity(directionalLight);
-	}
-
-	LightPtr pointLight = Light::create();
-	if (pointLight) {
-		pointLight->setPosition(model->getPosition() + glm::vec3(5.0f, 0.0f, 0.0f));
-		pointLight->setType(Light::POINT);
-		pointLight->setColor(glm::vec3(1.0f, 0.0f, 0.0f));
-		pointLight->setLinearAttenuation(0.2f);
-		pointLight->setCallback(moveLight);
-		pointLight->setUserData(model);
-		world->addEntity(pointLight);
-	}
 
 	// main loop
 	double lastTime = glfwGetTime();

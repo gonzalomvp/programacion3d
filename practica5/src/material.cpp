@@ -22,11 +22,11 @@ void Material::prepare() {
 	}
 
 	shader->setInt(shader->getLocation("useTexture"), useTexture);
-	shader->setVec3(shader->getLocation("color"), glm::vec3(m_color.r, m_color.g, m_color.b));
-	shader->setInt(shader->getLocation("shininess"), m_shininess);
+	shader->setVec4(shader->getLocation("materialColor"), m_color);
+	shader->setInt(shader->getLocation("materialShininess"), m_shininess);
 
 	// Prepare Lights
-	shader->setVec3(shader->getLocation("ambient"), State::ambient);
+	shader->setVec3(shader->getLocation("ambientLight"), State::ambient);
 	shader->setInt(shader->getLocation("numLights"), static_cast<int>(State::lights.size()));
 	for (size_t i = 0; i < State::lights.size(); ++i) {
 		State::lights[i]->prepare(static_cast<int>(i), shader);

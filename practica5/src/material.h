@@ -11,7 +11,7 @@ typedef std::shared_ptr<Material> MaterialPtr;
 
 class Material {
 public:
-	static MaterialPtr create(const TexturePtr& tex = nullptr, const ShaderPtr& shader = nullptr, glm::vec4 color = glm::vec4(1), uint8_t shininess = 0.0f) { return MaterialPtr(new Material(tex, shader, color, shininess), [](Material* p) { delete p; }); }
+	static MaterialPtr create(const TexturePtr& tex = nullptr, const ShaderPtr& shader = nullptr, glm::vec4 color = glm::vec4(1.0f), uint8_t shininess = 0.0f) { return MaterialPtr(new Material(tex, shader, color, shininess), [](Material* p) { delete p; }); }
 	const ShaderPtr&   getShader() const                 { return (m_shader) ? m_shader : State::defaultShader; }
 	ShaderPtr&         getShader()                       { return (m_shader) ? m_shader : State::defaultShader; }
 	void               setShader(ShaderPtr& shader)      { m_shader = shader;                                   }
