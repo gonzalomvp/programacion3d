@@ -15,12 +15,17 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 		for (pugi::xml_node bufferNode = buffersNode.child("buffer"); bufferNode; bufferNode = bufferNode.next_sibling("buffer")) {
 			pugi::xml_node materialNode = bufferNode.child("material");
 			
+			// Default Material values
 			glm::vec4 color(1.0f);
 			uint8_t shininess = 0;
+			Material::BlendMode blendMode = Material::ALPHA;
+			bool lighting = true;
+			bool culling = true;
+			bool depthWrite = true;
 			TexturePtr texture = nullptr;
+			TexturePtr normalTexture = nullptr;
 			TexturePtr reflectionTexture = nullptr;
 			TexturePtr refractionTexture = nullptr;
-			TexturePtr normalTexture = nullptr;
 			std::vector<float> texcoords;
 			std::vector<float> normals;
 			std::vector<float> tangents;
@@ -36,6 +41,28 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 				shininess = materialNode.child("shininess").text().as_uint();
 			}
 
+			if (materialNode.child("blend")) {
+				std::string blendModeStr = materialNode.child("blend").text().as_string();
+				if (blendModeStr == "add") {
+					blendMode = Material::ADD;
+				}
+				else if (blendModeStr == "mul") {
+					blendMode = Material::MUL;
+				}
+			}
+
+			if (materialNode.child("lighting")) {
+				lighting = materialNode.child("lighting").text().as_bool();
+			}
+
+			if (materialNode.child("culling")) {
+				culling = materialNode.child("culling").text().as_bool();
+			}
+
+			if (materialNode.child("depthwrite")) {
+				depthWrite = materialNode.child("depthwrite").text().as_bool();
+			}
+
 			if (materialNode.child("texture")) {
 				std::string textureStr = materialNode.child("texture").text().as_string();
 				std::vector<std::string> textureFiles = splitString<std::string>(textureStr, ',');
@@ -47,18 +74,21 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 											, (extractPath(filename) + textureFiles[3]).c_str()
 											, (extractPath(filename) + textureFiles[4]).c_str()
 											, (extractPath(filename) + textureFiles[5]).c_str());
-
-					//std::string texcoordsStr = bufferNode.child("texcoords").text().as_string();
-					//texcoords = splitString<float>(texcoordsStr, ',');
 				}
-
 				else {
 					std::string textureFile = extractPath(std::string(filename)) + textureStr;
 					texture = Texture::load(textureFile.c_str());
-					std::string texcoordsStr = bufferNode.child("texcoords").text().as_string();
-					texcoords = splitString<float>(texcoordsStr, ',');
 				}
 
+			}
+
+			std::string texcoordsStr = bufferNode.child("texcoords").text().as_string();
+			texcoords = splitString<float>(texcoordsStr, ',');
+
+			if (materialNode.child("normal_texture")) {
+				std::string textureStr = materialNode.child("normal_texture").text().as_string();
+				std::string textureFile = extractPath(std::string(filename)) + textureStr;
+				normalTexture = Texture::load(textureFile.c_str());
 			}
 
 			if (materialNode.child("reflect_texture")) {
@@ -89,12 +119,6 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 				}
 			}
 
-			if (materialNode.child("normal_texture")) {
-				std::string textureStr = materialNode.child("normal_texture").text().as_string();
-				std::string textureFile = extractPath(std::string(filename)) + textureStr;
-				normalTexture = Texture::load(textureFile.c_str());
-			}
-			
 			// Load indexes and coords
 			std::string indexesStr = bufferNode.child("indices").text().as_string();
 			std::vector<uint16_t> indexes = splitString<uint16_t>(indexesStr, ',');
@@ -119,8 +143,8 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			for (size_t i = 0; i < vericesSize; ++i) {
 				glm::vec3 pos(glm::vec3(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2]));
 				glm::vec2 tex(0.0f);
-				glm::vec3 normal(0.0f);
-				glm::vec3 tangent(0.0f); // comprobar si esta inicializacion es correcta o hay que usar otro vector
+				glm::vec3 normal(0.0f, 0.0f, 1.0f);
+				glm::vec3 tangent(1.0f, 0.0f, 0.0f);
 
 				if (texcoords.size() > (i * 2 + 1)) {
 					tex = glm::vec2(texcoords[i * 2], texcoords[i * 2 + 1]);
@@ -137,13 +161,10 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 				Vertex vertex(pos, tex, normal, tangent);
 				vertices.push_back(vertex);
 			}
-			MaterialPtr material = Material::create(texture, nullptr, color, shininess);
+			MaterialPtr material = Material::create(texture, shader, color, shininess, blendMode, lighting, culling, depthWrite);
+			material->setNormalTexture(normalTexture);
 			material->setReflectionTexture(reflectionTexture);
 			material->setRefractionTexture(refractionTexture);
-			material->setNormalTexture(normalTexture);
-			if (refractionTexture) {
-				material->setBlendMode(Material::ALPHA);
-			}
 			mesh->addBuffer(Buffer::create(vertices, indexes), material);
 		}
 		return mesh;

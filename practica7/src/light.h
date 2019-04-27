@@ -12,7 +12,7 @@ public:
 		POINT
 	};
 
-	static LightPtr create();
+	static LightPtr create(Type type, glm::vec3 color = glm::vec3(1.0f), float linearAttenuation = 0.0f) { return LightPtr(new Light(type, color, linearAttenuation), [](Light* p) { delete p; }); }
 
 	Type			 getType             () const                 { return m_type;              }
 	void			 setType             (Type type)              { m_type = type;              }
@@ -24,7 +24,7 @@ public:
 	void			 prepare(int index, ShaderPtr& shader) const;
 
 private:
-	Light(): m_type(DIRECTIONAL), m_color(1.0f), m_linearAttenuation(1.0f) {}
+	Light(Type type, glm::vec3 color, float linearAttenuation) : m_type(type), m_color(color), m_linearAttenuation(linearAttenuation) {}
 	~Light() {}
 
 	Type      m_type;

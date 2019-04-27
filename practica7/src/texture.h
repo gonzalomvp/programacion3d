@@ -3,6 +3,12 @@
 #include "common.h"
 #include "../lib/stb/stb_image.h"
 
+#define BASE_TEX_LAYER 0
+#define CUBE_TEX_LAYER 1
+#define NORM_TEX_LAYER 2
+#define REFR_TEX_LAYER 3
+#define REFL_TEX_LAYER 4
+
 class Texture;
 
 typedef std::shared_ptr<Texture> TexturePtr;
@@ -13,8 +19,9 @@ public:
 	static TexturePtr load   (const char* left, const char* right, const char* front, const char* back, const char* top, const char* bottom);
 	uint32_t          getId  () const { return m_id;                        }
 	const glm::ivec2& getSize() const { return m_size;                      }
-	void              bind   (size_t layer = 0) const;
 	bool              isCube () const { return m_isCube;                    }
+	
+	void              bind(size_t layer = 0) const;
 
 private:
 	Texture() : m_id(0), m_size(0), m_isCube(false) {}

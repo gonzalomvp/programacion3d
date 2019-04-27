@@ -1,33 +1,25 @@
 #include "light.h"
 #include "state.h"
 
-LightPtr Light::create() {
-	if (State::lights.size() < MAX_LIGHTS) {
-		return LightPtr(new Light(), [](Light* p) { delete p; });
-	}
-	else {
-		return nullptr;
-	}
-	
-}
-
 void Light::prepare(int index, ShaderPtr& shader) const {
-	glm::vec4 lightVector(0.0f);
+	glm::vec4 light(0.0f);
 
 	switch (m_type) {
-	case Light::DIRECTIONAL:
-		lightVector = glm::vec4(m_position, 0.0f);
-		break;
-	case Light::POINT:
-		lightVector = glm::vec4(m_position, 1.0f);
-		break;
-	default:
-		break;
+		case Light::DIRECTIONAL:
+			light = glm::vec4(m_position, 0.0f);
+			break;
+		case Light::POINT:
+			light = glm::vec4(m_position, 1.0f);
+			break;
+		default:
+			break;
 	}
 
-	lightVector = State::viewMatrix * lightVector;
+	// Convert light to view space
+	light = State::viewMatrix * light;
+
 	std::string indexStr = "[" + std::to_string(index) + "]";
-	shader->setVec4(shader->getLocation((std::string("lightVectors") + indexStr).c_str()), lightVector);
-	shader->setVec3(shader->getLocation((std::string("lightColors") + indexStr).c_str()), m_color);
-	shader->setFloat(shader->getLocation((std::string("lightAttenuations") + indexStr).c_str()), m_linearAttenuation);
+	shader->setVec4(shader->getLocation((std::string("lights") + indexStr).c_str()), light);
+	shader->setVec3(shader->getLocation((std::string("lightsColors") + indexStr).c_str()), m_color);
+	shader->setFloat(shader->getLocation((std::string("lightsAttenuations") + indexStr).c_str()), m_linearAttenuation);
 }
