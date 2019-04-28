@@ -141,7 +141,7 @@ int main() {
 	// Create Model
 	model = Model::create(cubeMesh);
 	model->setScale(glm::vec3(1.0f));
-	model->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
+	model->setEuler(glm::vec3(0.0f, 0.0f, 90.0f));
 	//model->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
 	model->setCallback(rotateModel);
 	world->addEntity(model);
