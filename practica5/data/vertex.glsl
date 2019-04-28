@@ -11,8 +11,8 @@ varying vec3 fnormal;
 varying vec2 ftex;
 
 void main() {
-	fpos = vec3(ModelView * vec4(vpos, 1));
-	fnormal = normalize(Normal * vec4(vnormal, 0));
+	fpos = vec3(ModelView * vec4(vpos, 1.0f));
+	fnormal = normalize(vec3(Normal * vec4(vnormal, 0.0f)));
 	ftex = vtex;
-	gl_Position =  MVP * vec4(vpos, 1);
+	gl_Position =  MVP * vec4(vpos, 1.0f);
 }
