@@ -46,14 +46,15 @@ void main() {
 	}	
 
 	// Combine material texture and material color
+	vec4 fragColor = materialColor;
 	if(useTexture) {
-		materialColor = texture2D(texSampler, ftex) * materialColor;
+		fragColor = texture2D(texSampler, ftex) * fragColor;
 	}
 
 	// Apply illumination only if there is at least one light in the scene
 	if(numLights > 0) {
-		materialColor = vec4((ambientLight + diffuseLight) * materialColor.rgb + specularLight, materialColor.a);
+		fragColor = vec4((ambientLight + diffuseLight) * fragColor.rgb + specularLight, fragColor.a);
 	}
 
-	gl_FragColor = materialColor;
+	gl_FragColor = fragColor;
 }
