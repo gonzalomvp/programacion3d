@@ -5,6 +5,7 @@ uniform mat4 Normal;
 uniform vec3 eyePos;
 uniform bool useReflectionTexture;
 uniform bool useRefractionTexture;
+uniform float refractionCoef;
 
 attribute vec3 vpos;
 attribute vec3 vnormal;
@@ -30,17 +31,17 @@ void main() {
 	ftex = vtex;
 
 	uvw = vpos;
-	vec3 eye = normalize(vec3(Model * vec4(vpos, 1.0f)) - eyePos);
-	vec3 normal = normalize(vec3(Model * vec4(vnormal, 0.0f)));
+	vec3 worldEye = normalize(vec3(Model * vec4(vpos, 1.0f)) - eyePos);
+	vec3 worldNormal = normalize(vec3(Model * vec4(vnormal, 0.0f)));
 
 	// Reflection
 	if(useReflectionTexture) {
-		uvwReflection = normalize(reflect(eye, normal));
+		uvwReflection = normalize(reflect(worldEye, worldNormal));
 	}
 
 	// Refraction
 	if(useRefractionTexture) {
-		uvwRefraction = normalize(refract(eye, normal, 0.98f));
+		uvwRefraction = normalize(refract(worldEye, worldNormal, refractionCoef));
 	}
 
 	gl_Position =  MVP * vec4(vpos, 1.0f);

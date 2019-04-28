@@ -26,6 +26,7 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			TexturePtr normalTexture = nullptr;
 			TexturePtr reflectionTexture = nullptr;
 			TexturePtr refractionTexture = nullptr;
+			float refractionCoef = 0.0f;
 			std::vector<float> texcoords;
 			std::vector<float> normals;
 			std::vector<float> tangents;
@@ -82,9 +83,6 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 
 			}
 
-			std::string texcoordsStr = bufferNode.child("texcoords").text().as_string();
-			texcoords = splitString<float>(texcoordsStr, ',');
-
 			if (materialNode.child("normal_texture")) {
 				std::string textureStr = materialNode.child("normal_texture").text().as_string();
 				std::string textureFile = extractPath(std::string(filename)) + textureStr;
@@ -117,6 +115,10 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 						, (extractPath(filename) + textureFiles[4]).c_str()
 						, (extractPath(filename) + textureFiles[5]).c_str());
 				}
+
+				if (materialNode.child("refract_coef")) {
+					refractionCoef = materialNode.child("refract_coef").text().as_float();
+				}
 			}
 
 			// Load indexes and coords
@@ -124,7 +126,13 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			std::vector<uint16_t> indexes = splitString<uint16_t>(indexesStr, ',');
 			std::string coordsStr = bufferNode.child("coords").text().as_string();
 			std::vector<float> coords = splitString<float>(coordsStr, ',');
-			
+
+			// Load texture coords if they exist
+			if (bufferNode.child("texcoords")) {
+				std::string texcoordsStr = bufferNode.child("texcoords").text().as_string();
+				texcoords = splitString<float>(texcoordsStr, ',');
+			}
+
 			// Load normals if they exist
 			if (bufferNode.child("normals")) {
 				std::string normalsStr = bufferNode.child("normals").text().as_string();
@@ -143,8 +151,8 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			for (size_t i = 0; i < vericesSize; ++i) {
 				glm::vec3 pos(glm::vec3(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2]));
 				glm::vec2 tex(0.0f);
-				glm::vec3 normal(0.0f, 0.0f, 1.0f);
-				glm::vec3 tangent(1.0f, 0.0f, 0.0f);
+				glm::vec3 normal(0.0f);
+				glm::vec3 tangent(0.0f);
 
 				if (texcoords.size() > (i * 2 + 1)) {
 					tex = glm::vec2(texcoords[i * 2], texcoords[i * 2 + 1]);
@@ -165,6 +173,7 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			material->setNormalTexture(normalTexture);
 			material->setReflectionTexture(reflectionTexture);
 			material->setRefractionTexture(refractionTexture);
+			material->setRefractionCoef(refractionCoef);
 			mesh->addBuffer(Buffer::create(vertices, indexes), material);
 		}
 		return mesh;

@@ -62,6 +62,7 @@ void Material::prepare() {
 	shader->setInt(shader->getLocation("useNormalsTexture"), useNormalsTexture);
 	shader->setInt(shader->getLocation("useReflectionTexture"), useReflectionTexture);
 	shader->setInt(shader->getLocation("useRefractionTexture"), useRefractionTexture);
+	shader->setFloat(shader->getLocation("refractionCoef"), m_refractionCoef);
 	shader->setVec4(shader->getLocation("materialColor"), m_color);
 	shader->setInt(shader->getLocation("materialShininess"), m_shininess);
 

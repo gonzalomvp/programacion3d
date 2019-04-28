@@ -15,68 +15,38 @@
 struct CameraData;
 typedef std::shared_ptr<CameraData> CameraDataPtr;
 
+struct LightData;
+typedef std::shared_ptr<LightData> LightDataPtr;
+
 struct CameraData {
-	GLFWwindow* win;
-	glm::dvec2 mouseCursorPrev;
-	const EntityPtr pivot;
-	const EntityPtr light;
+	const glm::vec3 pivot;
+	const glm::vec3 lookAtPos;
+	float angularSpeed;
+	float distance;
 
-	CameraData(GLFWwindow* _win, glm::dvec2 _mouseCursor, const EntityPtr& _pivot, const EntityPtr& _light) : win(_win), mouseCursorPrev(_mouseCursor), pivot(_pivot), light(_light) {}
+	CameraData(const glm::vec3& _pivot, const glm::vec3& _lookAtPos, float _angularSpeed, float _distance) : pivot(_pivot), lookAtPos(_lookAtPos), angularSpeed(_angularSpeed), distance(_distance) {}
 
-	static void update(Entity& entity, float deltaTime) {
+	static void rotateCamera(Entity& entity, float deltaTime) {
 		CameraDataPtr data = std::static_pointer_cast<CameraData>(entity.getUserData());
-		EntityPtr pivot = data->pivot;
-		EntityPtr light = data->light;
+		float angle = atan2(entity.getPosition().z, entity.getPosition().x);
+		angle += glm::radians(data->angularSpeed) * deltaTime;
+		entity.setPosition(data->pivot + glm::vec3(cosf(angle), 0.0f, sinf(angle)) * data->distance);
 
-		glm::vec2 pivotPos(pivot->getPosition().x, pivot->getPosition().z);
-		glm::vec2 cameraPos(entity.getPosition().x, entity.getPosition().z);
-		float angle = glm::degrees(atan2(cameraPos.y - pivotPos.y, cameraPos.x - pivotPos.x));
-
-		angle += -30.0f * deltaTime;
-		glm::vec2 newPos = glm::vec2(cosf(glm::radians(angle)), sinf(glm::radians(angle))) * 10.0f;
-		entity.setPosition(pivot->getPosition() + glm::vec3(newPos.x, entity.getPosition().y, newPos.y));
-		glm::mat4 lookAtMatrix = glm::lookAt(entity.getPosition(), pivot->getPosition(), glm::vec3(0.0f, 1.0f, 0.0f));
-		//entity.setQuaternion(glm::conjugate(glm::quat(lookAtMatrix)));
-		//entity.setQuaternion(glm::quat(glm::inverse(lookAtMatrix)));
+		glm::mat4 lookAtMatrix = glm::lookAt(entity.getPosition(), data->lookAtPos, glm::vec3(0.0f, 1.0f, 0.0f));
 		entity.setQuaternion(glm::quat(glm::transpose(lookAtMatrix)));
-		
-
-		//glm::dvec2 mouseCursor;
-		//glfwGetCursorPos(data->win, &mouseCursor.x, &mouseCursor.y);
-		//glm::dvec2 speedMouse = data->mouseCursorPrev - mouseCursor;
-		//data->mouseCursorPrev = mouseCursor;
-
-		//glm::vec3 cameraRotation = entity.getEuler() + glm::vec3(CAMERA_ROT_SPEED * static_cast<float>(speedMouse.y), CAMERA_ROT_SPEED * static_cast<float>(speedMouse.x), 0.0f);
-		//cameraRotation = glm::vec3(glm::clamp(cameraRotation.x, -80.0f, 80.0f), cameraRotation.y, cameraRotation.z);
-		//entity.setEuler(cameraRotation);
-
-		//glm::vec3 moveDirection;
-		//if (glfwGetKey(data->win, GLFW_KEY_W)) {
-		//	moveDirection += glm::vec3(0.0f, 0.0f, -1.0f);
-		//}
-		//if (glfwGetKey(data->win, GLFW_KEY_S)) {
-		//	moveDirection += glm::vec3(0.0f, 0.0f, 1.0f);
-		//}
-		//if (glfwGetKey(data->win, GLFW_KEY_D)) {
-		//	moveDirection += glm::vec3(1.0f, 0.0f, 0.0f);
-		//}
-		//if (glfwGetKey(data->win, GLFW_KEY_A)) {
-		//	moveDirection += glm::vec3(-1.0f, 0.0f, 0.0f);
-		//}
-		//if (glm::length(moveDirection) != 0) {
-		//	moveDirection = glm::normalize(moveDirection) * CAMERA_MOVE_SPEED * deltaTime;
-		//	entity.move(moveDirection);
-		//}
-
-		light->setPosition(entity.getPosition());
 	}
 };
 
-void rotateModel(Entity& entity, float deltaTime) {
-	//float angle = entity.getEuler().y;
-	//angle -= 20.0f * deltaTime;
-	//entity.setEuler(glm::vec3(entity.getEuler().x, angle, entity.getEuler().z));
-}
+struct LightData {
+	const EntityPtr refEntity;
+
+	LightData(const EntityPtr _refEntity) : refEntity(_refEntity) {}
+
+	static void moveLight(Entity& entity, float deltaTime) {
+		LightDataPtr data = std::static_pointer_cast<LightData>(entity.getUserData());
+		entity.setPosition(data->refEntity->getPosition());
+	}
+};
 
 int main() {
 	// init glfw
@@ -106,68 +76,55 @@ int main() {
 	// Create World
 	WorldPtr world = World::create();
 
-	// Load Skybox
+	// Create skybox
 	ShaderPtr skyboxShader = Shader::create(readString("data/skybox_vertex.glsl"), readString("data/skybox_fragment.glsl"));
 	MeshPtr skyboxMesh = Mesh::load("data/skybox.msh.xml", skyboxShader);
 	ModelPtr skyboxModel = Model::create(skyboxMesh);
-	//skyboxModel->setScale(glm::vec3(1.0f));
 	world->addEntity(skyboxModel);
 
-	
-
+	// Create teapot
 	MeshPtr teapotMesh = Mesh::load("data/teapot_reflect.msh.xml");
+	ModelPtr teapotModel = Model::create(teapotMesh);
+	teapotModel->setScale(glm::vec3(1.0f));
+	teapotModel->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
+	teapotModel->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
+	world->addEntity(teapotModel);
 
-	// Create Model
-	ModelPtr model = Model::create(teapotMesh);
-	model->setScale(glm::vec3(1.0f));
-	model->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
-	model->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
-	model->setCallback(rotateModel);
-	world->addEntity(model);
-
+	// Create monkey
 	MeshPtr suzanneMesh = Mesh::load("data/suzanne_refract.msh.xml");
+	ModelPtr suzanneModel = Model::create(suzanneMesh);
+	suzanneModel->setScale(glm::vec3(1.0f));
+	suzanneModel->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
+	suzanneModel->setPosition(glm::vec3(-3.0f, 0.0f, 0.0f));
+	world->addEntity(suzanneModel);
 
-	// Create Model
-	model = Model::create(suzanneMesh);
-	model->setScale(glm::vec3(1.0f));
-	model->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
-	model->setPosition(glm::vec3(-3.0f, 0.0f, 0.0f));
-	model->setCallback(rotateModel);
-	world->addEntity(model);
-
-	// Load Mesh
+	// Create wall cube
 	MeshPtr cubeMesh = Mesh::load("data/cube.msh.xml");
-
-	// Create Model
-	model = Model::create(cubeMesh);
-	model->setScale(glm::vec3(1.0f));
-	model->setEuler(glm::vec3(0.0f, 0.0f, 90.0f));
-	//model->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
-	model->setCallback(rotateModel);
-	world->addEntity(model);
-
-	// Set ambient color
-	world->setAmbient(glm::vec3(0.2f));
-
-	// Create lights
-	LightPtr pointLight = Light::create(Light::POINT);
-	if (pointLight) {
-		pointLight->setPosition(model->getPosition() + glm::vec3(0.0f, 0.0f, 10.0f));
-		pointLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
-		pointLight->setLinearAttenuation(0.01f);
-		world->addEntity(pointLight);
-	}
+	ModelPtr cubeModel = Model::create(cubeMesh);
+	cubeModel->setScale(glm::vec3(1.0f));
+	cubeModel->setEuler(glm::vec3(0.0f, 0.0f, 90.0f));
+	cubeModel->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	world->addEntity(cubeModel);
 
 	// Create Camera
 	CameraPtr camera = Camera::create();
 	camera->setPosition(glm::vec3(0.0f, 0.0f, 10.0f));
-	//camera->setEuler(glm::vec3(-25.0f, 0.0f, 0.0f));
 	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.0f));
-	camera->setCallback(CameraData::update);
-	glm::dvec2 mouseCursor;
-	glfwGetCursorPos(win, &mouseCursor.x, &mouseCursor.y);
-	camera->setUserData(std::make_shared<CameraData>(win, mouseCursor, model, pointLight));
+	camera->setCallback(CameraData::rotateCamera);
+	camera->setUserData(std::make_shared<CameraData>(cubeModel->getPosition(), cubeModel->getPosition(), -30.f, 10.0f));
 	world->addEntity(camera);
+
+	// Set ambient color
+	world->setAmbient(glm::vec3(0.2f));
+
+	// Create point light moving with camera
+	LightPtr pointLight = Light::create(Light::POINT);
+	pointLight->setPosition(camera->getPosition());
+	pointLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
+	pointLight->setLinearAttenuation(0.01f);
+	pointLight->setCallback(LightData::moveLight);
+	pointLight->setUserData(std::make_shared<LightData>(camera));
+	world->addEntity(pointLight);
 
 	// main loop
 	double lastTime = glfwGetTime();

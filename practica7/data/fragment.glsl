@@ -65,30 +65,31 @@ void main() {
 	}
 
 	// Combine material texture and material color
+	vec4 fragColor = materialColor;
 	if(useBaseTexture) {
 		if(isCubeTexture) {
-			materialColor = texture(cubeTexSampler, normalize(uvw)) * materialColor;
+			fragColor = texture(cubeTexSampler, normalize(uvw)) * fragColor;
 		}
 		else {
-			materialColor = texture(baseTexSampler, ftex) * materialColor;
+			fragColor = texture(baseTexSampler, ftex) * fragColor;
 		}
 	}
 
 	if(useReflectionTexture) {
-		materialColor = texture(reflectionTexSampler, normalize(uvwReflection)) * materialColor;
+		fragColor = texture(reflectionTexSampler, normalize(uvwReflection)) * fragColor;
 	}
 
 	if(useRefractionTexture) {
-		materialColor = texture(refractionTexSampler, normalize(uvwRefraction)) * materialColor;
+		fragColor = texture(refractionTexSampler, normalize(uvwRefraction)) * fragColor;
 	}
 
 	// Apply illumination only if there is at least one light in the scene
 	if(numLights > 0) {
-		//materialColor = vec4((ambientLight + diffuseLight) * materialColor.rgb + specularLight, materialColor.a);
+		//fragColor = vec4((ambientLight + diffuseLight) * fragColor.rgb + specularLight, fragColor.a);
 
 		// Not using ambient and diffuse as in the given example
-		materialColor = vec4(materialColor.rgb + specularLight, materialColor.a);
+		fragColor = vec4(fragColor.rgb + specularLight, fragColor.a);
 	}
 
-	gl_FragColor = materialColor;
+	gl_FragColor = fragColor;
 }
