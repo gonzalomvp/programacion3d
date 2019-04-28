@@ -169,5 +169,11 @@
     <None Include="..\data\vertex.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\data\skybox_fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\data\skybox_vertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

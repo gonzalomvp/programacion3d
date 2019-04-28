@@ -19,28 +19,49 @@ void Material::prepare() {
 	// This way the skybox will be always centered at the camera posisition
 	shader->setMatrix(shader->getLocation("SkyboxMVP"), State::projectionMatrix * glm::mat4(glm::mat3(State::viewMatrix)));
 
-	int useTexture = 0;
+	shader->setVec3(shader->getLocation("eyePos"), State::eyePos);
+
+	int useBaseTexture = 0;
 	int isCubeTexture = 0;
+	int useNormalsTexture = 0;
+	int useReflectionTexture = 0;
+	int useRefractionTexture = 0;
 	if (m_texture) {
-		useTexture = 1;
+		useBaseTexture = 1;
 		if (m_texture->isCube()) {
-			shader->setInt(shader->getLocation("texCubeSampler"), CUBE_TEX_LAYER);
+			shader->setInt(shader->getLocation("cubeTexSampler"), CUBE_TEX_LAYER);
 			m_texture->bind(CUBE_TEX_LAYER);
 			isCubeTexture = 1;
 		}
 		else {
-			shader->setInt(shader->getLocation("texSampler"), BASE_TEX_LAYER);
+			shader->setInt(shader->getLocation("baseTexSampler"), BASE_TEX_LAYER);
 			m_texture->bind(BASE_TEX_LAYER);
 		}
 	}
 
 	if (m_normalTexture) {
-		shader->setInt(shader->getLocation("texNormalsSampler"), NORM_TEX_LAYER);
+		shader->setInt(shader->getLocation("normalsTexSampler"), NORM_TEX_LAYER);
 		m_normalTexture->bind(NORM_TEX_LAYER);
+		useNormalsTexture = 1;
 	}
 
-	shader->setInt(shader->getLocation("useTexture"), useTexture);
+	if (m_reflectionTexture) {
+		m_reflectionTexture->bind(REFL_TEX_LAYER);
+		shader->setInt(shader->getLocation("reflectionTexSampler"), REFL_TEX_LAYER);
+		useReflectionTexture = 1;
+	}
+
+	if (m_refractionTexture) {
+		m_refractionTexture->bind(REFR_TEX_LAYER);
+		shader->setInt(shader->getLocation("refractionTexSampler"), REFR_TEX_LAYER);
+		useRefractionTexture = 1;
+	}
+
+	shader->setInt(shader->getLocation("useBaseTexture"), useBaseTexture);
 	shader->setInt(shader->getLocation("isCubeTexture"), isCubeTexture);
+	shader->setInt(shader->getLocation("useNormalsTexture"), useNormalsTexture);
+	shader->setInt(shader->getLocation("useReflectionTexture"), useReflectionTexture);
+	shader->setInt(shader->getLocation("useRefractionTexture"), useRefractionTexture);
 	shader->setVec4(shader->getLocation("materialColor"), m_color);
 	shader->setInt(shader->getLocation("materialShininess"), m_shininess);
 

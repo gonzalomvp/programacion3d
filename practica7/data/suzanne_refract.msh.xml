@@ -4,6 +4,7 @@
 			<material>
 				<blend>alpha</blend>
 				<color>1,1,1,1</color>
+				<refract_texture>sky_left.png,sky_right.png,sky_front.png,sky_back.png,sky_top.png,sky_bottom.png</refract_texture>
 				<refract_coef>0.98</refract_coef>
 				<shininess>0</shininess>
 			</material>

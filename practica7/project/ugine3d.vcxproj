@@ -183,6 +183,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\data\fragment.glsl" />
+    <None Include="..\data\skybox_fragment.glsl" />
+    <None Include="..\data\skybox_vertex.glsl" />
     <None Include="..\data\vertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

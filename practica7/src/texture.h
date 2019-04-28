@@ -6,8 +6,8 @@
 #define BASE_TEX_LAYER 0
 #define CUBE_TEX_LAYER 1
 #define NORM_TEX_LAYER 2
-#define REFR_TEX_LAYER 3
-#define REFL_TEX_LAYER 4
+#define REFL_TEX_LAYER 3
+#define REFR_TEX_LAYER 4
 
 class Texture;
 

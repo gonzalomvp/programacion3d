@@ -1,6 +1,10 @@
 uniform mat4 MVP;
+uniform mat4 Model;
 uniform mat4 ModelView;
 uniform mat4 Normal;
+uniform vec3 eyePos;
+uniform bool useReflectionTexture;
+uniform bool useRefractionTexture;
 
 attribute vec3 vpos;
 attribute vec3 vnormal;
@@ -11,7 +15,8 @@ varying vec3 fpos;
 varying vec3 fnormal;
 varying vec2 ftex;
 varying vec3 uvw;
-
+varying vec3 uvwReflection;
+varying vec3 uvwRefraction;
 varying mat3 TBN;
 
 void main() {
@@ -23,6 +28,20 @@ void main() {
 	TBN = mat3(T, B, fnormal);
 
 	ftex = vtex;
+
 	uvw = vpos;
+	vec3 eye = normalize(vec3(Model * vec4(vpos, 1.0f)) - eyePos);
+	vec3 normal = normalize(vec3(Model * vec4(vnormal, 0.0f)));
+
+	// Reflection
+	if(useReflectionTexture) {
+		uvwReflection = normalize(reflect(eye, normal));
+	}
+
+	// Refraction
+	if(useRefractionTexture) {
+		uvwRefraction = normalize(refract(eye, normal, 0.98f));
+	}
+
 	gl_Position =  MVP * vec4(vpos, 1.0f);
 }

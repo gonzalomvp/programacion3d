@@ -1,8 +1,13 @@
-uniform sampler2D texSampler;
-uniform samplerCube texCubeSampler;
-uniform sampler2D texNormalsSampler;
-uniform bool useTexture;
+uniform sampler2D baseTexSampler;
+uniform samplerCube cubeTexSampler;
+uniform sampler2D normalsTexSampler;
+uniform samplerCube reflectionTexSampler;
+uniform samplerCube refractionTexSampler;
+uniform bool useBaseTexture;
 uniform bool isCubeTexture;
+uniform bool useNormalsTexture;
+uniform bool useReflectionTexture;
+uniform bool useRefractionTexture;
 uniform vec4 materialColor;
 uniform int materialShininess;
 uniform int numLights;
@@ -15,21 +20,24 @@ varying vec3 fpos;
 varying vec3 fnormal;
 varying vec2 ftex;
 varying vec3 uvw;
+varying vec3 uvwReflection;
+varying vec3 uvwRefraction;
 varying mat3 TBN;
 
 void main() {
-	vec3 v3NormalTex = vec3(texture2D(texNormalsSampler, ftex));
-	v3NormalTex = v3NormalTex * 2.0f - 1.0f;
-	//v3NormalTex = vec3(1.f, 0.f, 1.f);
-	vec3 N = normalize(TBN * v3NormalTex);
-
+	vec3 N = vec3(0.0f);
+	if(useNormalsTexture) {
+		vec3 v3NormalTex = vec3(texture2D(normalsTexSampler, ftex));
+		v3NormalTex = v3NormalTex * 2.0f - 1.0f;
+		N = normalize(TBN * v3NormalTex);
+	}
+	else {
+		N = normalize(fnormal);
+	}
+	vec3 Eye = normalize(-fpos);
 
 	vec3 diffuseLight = vec3(0.0f);
 	vec3 specularLight = vec3(0.0f);
-
-	//N = normalize(fnormal);
-	vec3 Eye = normalize(-fpos);
-
 	for (int i = 0; i < numLights; ++i) {
 		vec3 L = lights[i].xyz;
 		float att = 1.0f;
@@ -57,13 +65,21 @@ void main() {
 	}
 
 	// Combine material texture and material color
-	if(useTexture) {
+	if(useBaseTexture) {
 		if(isCubeTexture) {
-			materialColor = texture(texCubeSampler, normalize(uvw)) * materialColor;
+			materialColor = texture(cubeTexSampler, normalize(uvw)) * materialColor;
 		}
 		else {
-			materialColor = texture(texSampler, ftex) * materialColor;
+			materialColor = texture(baseTexSampler, ftex) * materialColor;
 		}
+	}
+
+	if(useReflectionTexture) {
+		materialColor = texture(reflectionTexSampler, normalize(uvwReflection)) * materialColor;
+	}
+
+	if(useRefractionTexture) {
+		materialColor = texture(refractionTexSampler, normalize(uvwRefraction)) * materialColor;
 	}
 
 	// Apply illumination only if there is at least one light in the scene
