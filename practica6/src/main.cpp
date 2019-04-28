@@ -117,7 +117,7 @@ int main() {
 	CameraPtr camera = Camera::create();
 	camera->setClearColor(glm::vec3(0.0f, 0.0f, 0.0f));
 	camera->setCallback(CameraData::rotateCamera);
-	camera->setUserData(std::make_shared<CameraData>(model->getPosition() + glm::vec3(0.0f, 20.0f, 0.0f), pointLight->getPosition(), 20.f, 25.0f));
+	camera->setUserData(std::make_shared<CameraData>(model->getPosition() + glm::vec3(0.0f, 20.0f, 0.0f), pointLight->getPosition(), -20.f, 25.0f));
 	world->addEntity(camera);
 
 	// main loop
