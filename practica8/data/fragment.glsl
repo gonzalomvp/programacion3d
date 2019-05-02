@@ -1,6 +1,7 @@
 uniform sampler2D baseTexSampler;
 uniform samplerCube cubeTexSampler;
 uniform sampler2D normalsTexSampler;
+uniform sampler2D depthSampler;
 uniform samplerCube reflectionTexSampler;
 uniform samplerCube refractionTexSampler;
 uniform bool useBaseTexture;
@@ -8,6 +9,7 @@ uniform bool isCubeTexture;
 uniform bool useNormalsTexture;
 uniform bool useReflectionTexture;
 uniform bool useRefractionTexture;
+uniform bool useShadows;
 uniform vec4 materialColor;
 uniform int materialShininess;
 uniform int numLights;
@@ -23,6 +25,7 @@ varying vec3 uvw;
 varying vec3 uvwReflection;
 varying vec3 uvwRefraction;
 varying mat3 TBN;
+varying vec3 depthCoord;
 
 void main() {
 	vec3 N = vec3(0.0f);
@@ -90,6 +93,13 @@ void main() {
 		// Not using ambient and diffuse as in the given example
 		//fragColor = vec4(fragColor.rgb + specularLight, fragColor.a);
 	}
+	
+	vec4 shadowColor = vec4(1.0f);
+	if(useShadows) {
+		if ( texture2D(depthSampler, vec2(depthCoord)).z < depthCoord.z - 0.0009f ) {
+			shadowColor = vec4(ambientLight, 1);
+		}
+	}
 
-	gl_FragColor = fragColor;
+	gl_FragColor = fragColor * shadowColor;
 }

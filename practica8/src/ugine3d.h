@@ -6,6 +6,7 @@
 #include "common.h"
 #include "emitter.h"
 #include "entity.h"
+#include "framebuffer.h"
 #include "light.h"
 #include "mesh.h"
 #include "model.h"

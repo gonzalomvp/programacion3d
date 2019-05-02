@@ -102,6 +102,9 @@
     <ClInclude Include="..\src\emitter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\framebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp">
@@ -161,6 +164,9 @@
     <ClCompile Include="..\src\emitter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\framebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\data\fragment.glsl">
@@ -173,6 +179,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\data\skybox_vertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\data\shadows_fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\data\shadows_vertex.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

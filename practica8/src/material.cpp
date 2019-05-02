@@ -1,7 +1,10 @@
 #include "material.h"
 
 void Material::prepare() {
-	ShaderPtr shader = getShader();
+	ShaderPtr shader = State::overrideShader;
+	if (!shader) {
+		shader = getShader();
+	}
 	shader->use();
 
 	shader->setMatrix(shader->getLocation("Model"), State::modelMatrix);
@@ -102,4 +105,11 @@ void Material::prepare() {
 		}
 	}
 	shader->setInt(shader->getLocation("numLights"), numLights);
+
+	// Shadows uniform variables
+	shader->setInt(shader->getLocation("useShadows"), State::shadows);
+	if (State::shadows) {
+		shader->setMatrix(shader->getLocation("depthBiasMatrix"), State::depthBiasMatrix * State::modelMatrix);
+		shader->setInt(shader->getLocation("depthSampler"), SHDW_TEX_LAYER);
+	}
 }

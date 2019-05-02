@@ -11,6 +11,14 @@ void Camera::prepare() {
 	viewMatrix = glm::translate(viewMatrix, -m_position);
 	State::viewMatrix = viewMatrix;
 
+	//Set framebuffer
+	if (m_framebuffer) {
+		m_framebuffer->bind();
+	}
+	else {
+		Framebuffer::bindScreen();
+	}
+
 	glViewport(m_viewport[0], m_viewport[1], m_viewport[2], m_viewport[3]);
 	glScissor(m_viewport[0], m_viewport[1], m_viewport[2], m_viewport[3]);
 	glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, 1.0f);

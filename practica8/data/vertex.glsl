@@ -2,10 +2,12 @@ uniform mat4 MVP;
 uniform mat4 Model;
 uniform mat4 ModelView;
 uniform mat4 Normal;
+uniform mat4 depthBiasMatrix;
 uniform vec3 eyePos;
 uniform bool useReflectionTexture;
 uniform bool useRefractionTexture;
 uniform float refractionCoef;
+uniform bool useShadows;
 
 attribute vec3 vpos;
 attribute vec3 vnormal;
@@ -19,6 +21,7 @@ varying vec3 uvw;
 varying vec3 uvwReflection;
 varying vec3 uvwRefraction;
 varying mat3 TBN;
+varying vec3 depthCoord;
 
 void main() {
 	fpos = vec3(ModelView * vec4(vpos, 1.0f));
@@ -42,6 +45,10 @@ void main() {
 	// Refraction
 	if(useRefractionTexture) {
 		uvwRefraction = normalize(refract(worldEye, worldNormal, refractionCoef));
+	}
+	
+	if (useShadows) {
+		depthCoord = vec3(depthBiasMatrix * vec4(vpos, 1.0f));
 	}
 
 	gl_Position =  MVP * vec4(vpos, 1.0f);

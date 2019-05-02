@@ -1,5 +1,33 @@
 #include "texture.h"
 
+TexturePtr Texture::create(uint16_t width, uint16_t height, bool isDepth) {
+	TexturePtr texture(new Texture(width, height, isDepth), [](Texture* p) { delete p; });
+
+	texture->m_isCube = false;
+
+	// Generate openGL texture
+	glGenTextures(1, &(texture->m_id));
+
+	// Bind texture
+	texture->bind(BASE_TEX_LAYER);
+
+	// Set params
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	// Define texture
+	if (isDepth) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
+	}
+	else {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	}
+	
+	return texture;
+}
+
 TexturePtr Texture::load(const char* filename) {
 	// Load image with STB
 	int w, h;

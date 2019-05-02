@@ -9,44 +9,13 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
-#define CAMERA_MOVE_SPEED 5.0f
-#define CAMERA_ROT_SPEED  0.2f
-
-struct CameraData;
-typedef std::shared_ptr<CameraData> CameraDataPtr;
-
-struct LightData;
-typedef std::shared_ptr<LightData> LightDataPtr;
-
-struct CameraData {
-	const glm::vec3 pivot;
-	const glm::vec3 lookAtPos;
-	float angularSpeed;
-	float distance;
-
-	CameraData(const glm::vec3& _pivot, const glm::vec3& _lookAtPos, float _angularSpeed, float _distance) : pivot(_pivot), lookAtPos(_lookAtPos), angularSpeed(_angularSpeed), distance(_distance) {}
-
-	static void rotateCamera(Entity& entity, float deltaTime) {
-		CameraDataPtr data = std::static_pointer_cast<CameraData>(entity.getUserData());
-		float angle = atan2(entity.getPosition().z, entity.getPosition().x);
-		angle += glm::radians(data->angularSpeed) * deltaTime;
-		entity.setPosition(data->pivot + glm::vec3(cosf(angle), 0.0f, sinf(angle)) * data->distance);
-
-		glm::mat4 lookAtMatrix = glm::lookAt(entity.getPosition(), data->lookAtPos, glm::vec3(0.0f, 1.0f, 0.0f));
-		entity.setQuaternion(glm::quat(glm::transpose(lookAtMatrix)));
-	}
-};
-
-struct LightData {
-	const EntityPtr refEntity;
-
-	LightData(const EntityPtr _refEntity) : refEntity(_refEntity) {}
-
-	static void moveLight(Entity& entity, float deltaTime) {
-		LightDataPtr data = std::static_pointer_cast<LightData>(entity.getUserData());
-		entity.setPosition(data->refEntity->getPosition());
-	}
-};
+static void moveLight(Entity& entity, float deltaTime) {
+	float pitch = glm::radians(-30.0f);
+	float yaw = atan2f(entity.getPosition().x, entity.getPosition().z) + glm::radians(32.0f) * deltaTime;
+	float roll = 0.0f;
+	glm::quat rotation = glm::quat(glm::vec3(pitch, yaw, roll));
+	entity.setPosition(rotation * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+}
 
 int main() {
 	// init glfw
@@ -75,6 +44,8 @@ int main() {
 
 	// Create World
 	WorldPtr world = World::create();
+	world->setShadows(true);
+	world->setDepthOrtho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 100.0f);
 
 	// Create scene
 	MeshPtr sceneMesh = Mesh::load("data/scene.msh.xml");
@@ -92,16 +63,13 @@ int main() {
 	world->addEntity(camera);
 
 	// Set ambient color
-	world->setAmbient(glm::vec3(0.2f));
+	world->setAmbient(glm::vec3(0.5f));
 
 	// Create point light moving with camera
-	LightPtr pointLight = Light::create(Light::POINT);
-	pointLight->setPosition(camera->getPosition());
-	pointLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
-	pointLight->setLinearAttenuation(0.01f);
-	pointLight->setCallback(LightData::moveLight);
-	pointLight->setUserData(std::make_shared<LightData>(camera));
-	world->addEntity(pointLight);
+	LightPtr directionalLight = Light::create(Light::DIRECTIONAL);
+	directionalLight->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
+	directionalLight->setCallback(moveLight);
+	world->addEntity(directionalLight);
 
 	// main loop
 	double lastTime = glfwGetTime();
