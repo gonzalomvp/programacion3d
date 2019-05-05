@@ -147,8 +147,8 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			
 			// Create vertices
 			std::vector<Vertex> vertices;
-			size_t vericesSize = coords.size() / 3;
-			for (size_t i = 0; i < vericesSize; ++i) {
+			size_t verticesSize = coords.size() / 3;
+			for (size_t i = 0; i < verticesSize; ++i) {
 				glm::vec3 pos(glm::vec3(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2]));
 				glm::vec2 tex(0.0f);
 				glm::vec3 normal(0.0f);

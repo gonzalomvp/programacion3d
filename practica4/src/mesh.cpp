@@ -23,8 +23,8 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 			std::string texcoordsStr = bufferNode.child("texcoords").text().as_string();
 			std::vector<float> texcoords = splitString<float>(texcoordsStr, ',');
 			std::vector<Vertex> vertices;
-			size_t vericesSize = coords.size() / 3;
-			for (size_t i = 0; i < vericesSize; ++i) {
+			size_t verticesSize = coords.size() / 3;
+			for (size_t i = 0; i < verticesSize; ++i) {
 				Vertex vertex(glm::vec3(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2]), glm::vec3(1), glm::vec2(texcoords[i * 2], texcoords[i * 2 + 1]));
 				vertices.push_back(vertex);
 			}
