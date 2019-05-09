@@ -28,7 +28,7 @@ public:
 	void                     setLastFrame(uint16_t lastFrame) { m_lastFrame = lastFrame; }
 	int                      getBoneIndex(const std::string& name) const;
 
-	void                draw         ();
+	void draw();
 
 private:
 	Mesh()  {}

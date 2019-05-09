@@ -25,9 +25,9 @@ public:
 	EntityDataPtr&	      getUserData   ()                               { return m_data;                                           }
 	void                  setUserData   (const EntityDataPtr& data)      { m_data = data;                                           }
 
-	void             move       (const glm::vec3& vec);
-	virtual void     update     (float deltaTime);
-	virtual void     draw       () {}
+	void         move   (const glm::vec3& vec);
+	virtual void update (float deltaTime);
+	virtual void draw   ();
 
 protected:
 	Entity() : m_position(), m_euler(), m_quat(), m_scale(1.0f), m_callback(nullptr) {}

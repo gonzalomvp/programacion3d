@@ -34,6 +34,8 @@ void Emitter::update(float deltaTime) {
 }
 
 void Emitter::draw() {
+	Entity::draw();
+
 	for (size_t i = 0; i < m_particles.size(); ++i) {
 		m_particles[i]->draw();
 	}

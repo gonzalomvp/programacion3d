@@ -15,6 +15,8 @@ Billboard::Billboard(const MaterialPtr& mat, const glm::vec2& size, float spin) 
 }
 
 void Billboard::draw() {
+	Entity::draw();
+
 	// Matrix column-major
 	glm::mat4 modelMatrix = glm::mat4(glm::vec4(State::viewMatrix[0].x, State::viewMatrix[1].x, State::viewMatrix[2].x, 0.0f),
                                       glm::vec4(State::viewMatrix[0].y, State::viewMatrix[1].y, State::viewMatrix[2].y, 0.0f),

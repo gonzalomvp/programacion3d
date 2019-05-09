@@ -12,7 +12,7 @@ void Model::calculateAnimMatrices(float frame, const std::vector<Bone>& bones) {
 			m_animMatrices.push_back(bones[i].calculateAnimMatrix(frame));
 		}
 	}
-	for (size_t i = 0; i < bones.size(); ++i) {
+	for (size_t i = 0; i < m_animMatrices.size(); ++i) {
 		m_animMatrices[i] = m_animMatrices[i] * bones[i].getInvPoseMatrix();
 	}
 }
@@ -34,6 +34,8 @@ void Model::update(float deltaTime) {
 }
 
 void Model::draw() {
+	Entity::draw();
+
 	glm::mat4 modelMatrix = glm::translate(glm::mat4(), m_position);
 	modelMatrix = glm::rotate(modelMatrix, glm::angle(m_quat), glm::axis(m_quat));
 	modelMatrix = glm::scale(modelMatrix, m_scale);
@@ -41,8 +43,9 @@ void Model::draw() {
 
 	State::animation = m_animate;
 	if (m_animate) {
-		State::animMatrices = m_animMatrices;
+		State::animMatrices = &m_animMatrices;
 	}
-
 	m_mesh->draw();
+
+	State::animMatrices = nullptr;
 }

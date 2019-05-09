@@ -215,14 +215,14 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 				parent = boneNode.child("parent").text().as_string();
 			}
 
+			Bone bone(boneName.c_str(), mesh->getBoneIndex(parent.c_str()));
+
 			std::string invPoseStr = boneNode.child("inv_pose").text().as_string();
 			invPose = splitString<float>(invPoseStr, ',');
-
-			BonePtr bone = Bone::create(boneName.c_str(), mesh->getBoneIndex(parent.c_str()));
-			bone->setInvPoseMatrix(glm::mat4(invPose[0],  invPose[1],  invPose[2],  invPose[3]
-				                           , invPose[4],  invPose[5],  invPose[6],  invPose[7]
-				                           , invPose[8],  invPose[9],  invPose[10], invPose[11]
-				                           , invPose[12], invPose[13], invPose[14], invPose[15]));
+			bone.setInvPoseMatrix(glm::mat4(invPose[0],  invPose[1],  invPose[2],  invPose[3]
+				                           ,invPose[4],  invPose[5],  invPose[6],  invPose[7]
+				                           ,invPose[8],  invPose[9],  invPose[10], invPose[11]
+				                           ,invPose[12], invPose[13], invPose[14], invPose[15]));
 
 			if (boneNode.child("positions")) {
 				std::string positionsStr = boneNode.child("positions").text().as_string();
@@ -231,7 +231,7 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 				for (size_t i = 0; i < positionsSize; ++i) {
 					uint16_t frame = static_cast<uint16_t>(positions[i * 4]);
 					glm::vec3 position = glm::vec3(glm::vec3(positions[i * 4 + 1], positions[i * 4 + 2], positions[i * 4 + 3]));
-					bone->addPosition(frame, position);
+					bone.addPosition(frame, position);
 				}
 			}
 
@@ -242,7 +242,7 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 				for (size_t i = 0; i < rotationsSize; ++i) {
 					uint16_t frame = static_cast<uint16_t>(rotations[i * 5]);
 					glm::quat rotation = glm::quat(rotations[i * 5 + 1], rotations[i * 5 + 2], rotations[i * 5 + 3], rotations[i * 5 + 4]);
-					bone->addRotation(frame, rotation);
+					bone.addRotation(frame, rotation);
 				}
 			}
 
@@ -253,11 +253,11 @@ MeshPtr Mesh::load(const char* filename, const ShaderPtr& shader) {
 				for (size_t i = 0; i < scalesSize; ++i) {
 					uint16_t frame = static_cast<uint16_t>(scales[i * 4]);
 					glm::vec3 scale = glm::vec3(glm::vec3(scales[i * 4 + 1], scales[i * 4 + 2], scales[i * 4 + 3]));
-					bone->addScale(frame, scale);
+					bone.addScale(frame, scale);
 				}
 			}
 
-			mesh->addBone(*bone);
+			mesh->addBone(bone);
 		}
 
 		return mesh;

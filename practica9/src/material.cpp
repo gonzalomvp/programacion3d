@@ -115,10 +115,10 @@ void Material::prepare() {
 
 	// Animation
 	shader->setInt(shader->getLocation("skinned"), State::animation);
-	if (State::animation) {
-		for (size_t i = 0; i < State::animMatrices.size(); ++i) {
+	if (State::animation && State::animMatrices) {
+		for (size_t i = 0; i < State::animMatrices->size(); ++i) {
 			std::string indexStr = "[" + std::to_string(i) + "]";
-			shader->setMatrix(shader->getLocation((std::string("animMatrices") + indexStr).c_str()), State::animMatrices[i]);
+			shader->setMatrix(shader->getLocation((std::string("animMatrices") + indexStr).c_str()), (*State::animMatrices)[i]);
 		}
 	}
 }

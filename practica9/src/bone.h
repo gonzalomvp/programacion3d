@@ -2,12 +2,9 @@
 
 #include "common.h"
 
-class Bone;
-typedef std::shared_ptr<Bone> BonePtr;
-
 class Bone {
 public:
-	static BonePtr create(const char* name, int parentIndex) { return BonePtr(new Bone(name, parentIndex), [](Bone* p) { delete p; }); }
+	Bone(const std::string& name, int parentIndex) : m_name(name), m_parentIndex(parentIndex), m_invPoseMatrix() {}
 	~Bone() {}
 
 	const std::string& getName()        const { return m_name;        }
@@ -26,8 +23,6 @@ public:
 	glm::vec3 calculateScale     (float frame) const;
 
 private:
-	Bone(const std::string& name, int parentIndex) : m_name(name), m_parentIndex(parentIndex) {}
-
 	const std::string m_name;
 	int               m_parentIndex;
 	glm::mat4         m_invPoseMatrix;
@@ -35,5 +30,4 @@ private:
 	std::vector<std::pair<uint16_t, const glm::vec3>> m_positions;
 	std::vector<std::pair<uint16_t, const glm::quat>> m_rotations;
 	std::vector<std::pair<uint16_t, const glm::vec3>> m_scales;
-
 };

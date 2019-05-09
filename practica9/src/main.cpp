@@ -51,10 +51,8 @@ int main() {
 	dwarfModel->setScale(glm::vec3(1.0f));
 	dwarfModel->setEuler(glm::vec3(0.0f, 0.0f, 0.0f));
 	dwarfModel->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-
 	dwarfModel->animate(true);
 	dwarfModel->setFps(16);
-
 	world->addEntity(dwarfModel);
 
 	// Create Camera
